@@ -1,17 +1,34 @@
 import { screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import HomePage from "@/app/page";
 import { renderWithProviders } from "./render";
 import { installFetchMock } from "./setup-fetch";
 
-// next/navigation is only used by other routes; the Scoreboard at "/"
-// doesn't read URL state in Phase 1, so we don't need a mock here.
+const mockReplace = vi.fn();
+let mockSearch = new URLSearchParams();
+
+vi.mock("next/navigation", () => ({
+  useRouter: () => ({ replace: mockReplace, push: vi.fn() }),
+  useSearchParams: () => mockSearch,
+  usePathname: () => "/",
+}));
+
+// Pin "today" to a date that exists in the schedule fixture. Mocking
+// todayUtcDate is cleaner than vi.useFakeTimers, which would also stall
+// React Query's internal timers and break waitFor.
+vi.mock("@/lib/url", async () => {
+  const actual = await vi.importActual<typeof import("@/lib/url")>("@/lib/url");
+  return { ...actual, todayUtcDate: () => "2026-05-09" };
+});
+
+import HomePage from "@/app/page";
 
 describe("Scoreboard", () => {
   let teardown: () => void;
 
   beforeEach(() => {
     teardown = installFetchMock();
+    mockReplace.mockReset();
+    mockSearch = new URLSearchParams();
   });
 
   afterEach(() => {
@@ -39,5 +56,32 @@ describe("Scoreboard", () => {
         .filter((a) => a.getAttribute("href")?.startsWith("/game/"));
       expect(gameLinks.length).toBeGreaterThan(0);
     });
+  });
+
+  it("clicking the next-day chevron calls router.replace with ?date= one day later", async () => {
+    renderWithProviders(<HomePage />);
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /next day/i })).toBeInTheDocument();
+    });
+    screen.getByRole("button", { name: /next day/i }).click();
+    expect(mockReplace).toHaveBeenCalledWith("/?date=2026-05-10");
+  });
+
+  it("with ?date=YYYY-MM-DD shows that date's games and a Today link", async () => {
+    mockSearch = new URLSearchParams("date=2026-05-11");
+    renderWithProviders(<HomePage />);
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /today/i })).toBeInTheDocument();
+    });
+  });
+
+  it("clicking the Today link drops the date param", async () => {
+    mockSearch = new URLSearchParams("date=2026-05-12");
+    renderWithProviders(<HomePage />);
+    await waitFor(() => {
+      expect(screen.getByRole("button", { name: /today/i })).toBeInTheDocument();
+    });
+    screen.getByRole("button", { name: /today/i }).click();
+    expect(mockReplace).toHaveBeenCalledWith("/");
   });
 });
