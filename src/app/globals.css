@@ -15,16 +15,9 @@
   --rink-line: #9ca3af;
   --home: #2563eb;
   --away: #ea580c;
-
-  /* Legacy aliases retained while the boilerplate page.tsx is still in place;
-     can be removed in Phase 1.1 along with the create-next-app landing page. */
-  --background: var(--bg);
-  --foreground: var(--text);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

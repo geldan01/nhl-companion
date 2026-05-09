@@ -43,7 +43,7 @@ Everything every later phase depends on: image hosts, design tokens, the team-co
 
 The skeleton: header, breakpoint nav, and the three top-level pages (Scoreboard / Standings / Stats), all wired through `<DataState>` and using the Phase 0 components. The "Now watching" pill renders nothing yet — `WatchingProvider` is mounted but no setter is wired (Phase 2).
 
-- [ ] **1.1 Delete the create-next-app boilerplate.** Replace `src/app/page.tsx` with a minimal placeholder (`return null` or a one-line "Loading scoreboard..." while step 1.5 lands). Confirm `npm run build` still succeeds.
+- [x] **1.1 Delete the create-next-app boilerplate.** Done. `src/app/page.tsx` is now a one-liner "Loading scoreboard…" placeholder until 1.6 lands the real Scoreboard. Also took the opportunity (per the 0.2 working note) to drop the now-unused `--background`/`--foreground` aliases and the matching `@theme inline { --color-background, --color-foreground }` keys — the body uses `--bg`/`--text` directly. `@theme inline` keeps only the font keys. Build clean.
 
 - [ ] **1.2 `WatchingProvider` in `src/lib/watching/provider.tsx`.** React Context: `Watching | null`, `setWatching(snapshot)`, `clearWatching()`. Hook `useWatching()` returns `{ watching, setWatching, clearWatching }`. Throws if used outside the provider. No `useGame` subscription here — that's the pill's job. Test (`provider.test.tsx`) covers set/clear/reset.
 
