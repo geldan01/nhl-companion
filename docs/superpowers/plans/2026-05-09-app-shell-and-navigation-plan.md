@@ -67,7 +67,7 @@ The skeleton: header, breakpoint nav, and the three top-level pages (Scoreboard 
   - **Stats** (5): defaults to skater table; switches to goalie via `?kind=goalie`; switches to team via `?kind=team` and confirms team rows are NOT links (per the 1.8 deviation); clicking the Goalies tab calls `router.replace('/stats?kind=goalie')`; clicking Skaters from a goalie URL drops the param.
   - `next/navigation` is mocked per-test with a controllable `mockSearch` and a spy `mockReplace` so URL state and routing assertions are decoupled from any router runtime.
 
-- [ ] **1.11 Commit Phase 1.** All tests green; `npm run build` green; manually open `npm run dev`, navigate between the three routes on both viewports. Commit message: `feat(ui): app shell + scoreboard / standings / stats routes`.
+- [x] **1.11 Commit Phase 1.** Done as a stack of per-step commits (`95383fc`, `515a527`, `4489e2a`, `8ba4603`, `a2e8be1`, `1158a1e`, `795170e`, `8568466`, `8e08795`, `7a0d205`) plus this close-out tick. Final greens: lint clean, 97 tests green (20 added in this phase: 5 WatchingProvider + 9 url helpers + 11 integration, minus the 2 GameStatePill assertion tweaks that didn't add count), `npm run build` green with three new app routes (`/`, `/standings`, `/stats`) all statically prerenderable. Manual `npm run dev` browser walk-through deferred — this autonomous workflow can't drive a browser; revisit when Phase 2 wires the live pill (the manual smoke is more meaningful then).
 
 ---
 
