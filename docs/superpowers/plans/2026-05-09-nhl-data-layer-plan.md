@@ -1,7 +1,7 @@
 # NHL Data Layer — Implementation Plan
 
 **Spec:** [`docs/superpowers/specs/2026-05-09-nhl-data-layer-design.md`](../specs/2026-05-09-nhl-data-layer-design.md)
-**Status:** Phase 4 complete 2026-05-09
+**Status:** Phase 5 complete 2026-05-09
 
 Phases run top-to-bottom. Each step lists files touched, acceptance criteria, and any verification commands. Tick the checkbox when the step is done **and** its acceptance criteria pass.
 
@@ -87,15 +87,15 @@ These all share the same boring pattern — no live cadence flip. Quick to land 
 
 The only module that bends the five-file pattern. One fetcher + one route handler keyed by `?kind=`, three schemas + three hooks.
 
-- [ ] **5.1 Record three fixtures.** `__fixtures__/skater.json`, `goalie.json`, `team.json`.
-- [ ] **5.2 `stats/schema.skater.ts`, `schema.goalie.ts`, `schema.team.ts`.** Three Zod schemas, three schema tests.
-- [ ] **5.3 `stats/fetcher.ts`.** Single `fetchStats(kind, params?)` that switches schema by `kind`. Returns a discriminated union typed by `kind` (use overloads for ergonomics).
-- [ ] **5.4 `stats/route.ts`.** Reads `?kind=` from `URL`, validates against an enum, dispatches to fetcher.
-- [ ] **5.5 `app/api/nhl/stats/route.ts`.** One-line re-export.
-- [ ] **5.6 `stats/useSkaterStats.ts`, `useGoalieStats.ts`, `useTeamStats.ts`.** Three thin hooks all hitting `/api/nhl/stats?kind=…`.
-- [ ] **5.7 `stats/index.ts`.** Re-exports the three hooks and three types.
-- [ ] **5.8 Update `lib/nhl/index.ts`.** Add `fetchStats` to escape-hatch exports.
-- [ ] **5.9 Commit Phase 5.** Single commit: "feat(nhl): stats endpoint module (skater, goalie, team leaderboards)".
+- [x] **5.1 Record three fixtures.** `__fixtures__/skater.json` (top-10 by points), `goalie.json` (top-10 by wins), `team.json` (all 32). Stats endpoints require `cayenneExp=seasonId=… and gameTypeId=…`; without it they 500.
+- [x] **5.2 `schema.skater.ts` / `schema.goalie.ts` / `schema.team.ts` + combined `schema.test.ts`.** All `{ total, data: [...] }`-shaped. `shootingPct` is nullable for 0-shot skaters.
+- [x] **5.3 `stats/fetcher.ts`.** `fetchStats<K extends StatsKind>(kind, params)` with `StatsResponseFor<K>` conditional return type. `currentSeasonId()` helper computes the active NHL season from `now` (July onward = next season's id). Defaults: seasonId=current, gameTypeId=2, limit=25.
+- [x] **5.4 `stats/route.ts`.** Validates `?kind=` against `STATS_KINDS` tuple (400 on bad/missing), parses optional `seasonId`/`gameTypeId`/`limit`/`sort` from query string and forwards.
+- [x] **5.5 `app/api/nhl/stats/route.ts`.** One-line re-export.
+- [x] **5.6 Three hooks in `useStats.ts`.** Shared internal `useStats(kind, params)` plus exported `useSkaterStats` / `useGoalieStats` / `useTeamStats` wrappers, each defaulting `sort` to a JSON-encoded `[{property, direction:'DESC'}]` spec — NHL's stats API treats a bare property name as ascending, useless for "top N" leaderboards.
+- [x] **5.7 `stats/index.ts`.** Done — three hooks + three response/row types + `STATS_KINDS`/`StatsKind`/`StatsParams`/`currentSeasonId`.
+- [x] **5.8 Update `lib/nhl/index.ts`.** `fetchStats` and `currentSeasonId` re-exported.
+- [x] **5.9 Commit Phase 5.** Commit `d4affa7`. 49 tests green, lint + build clean. Verified McDavid 138 / Kucherov 130 / MacKinnon 127 atop the skater board.
 
 ---
 
@@ -143,3 +143,6 @@ Use this section as a scratchpad while implementing — surprises, decisions, th
 - **2026-05-09 — Phase 4.** Spec deviation: `/v1/schedule-now` (as listed in the design doc) doesn't exist; the working endpoint is `/v1/schedule/now`. Several other "/now" endpoints (`/v1/club-stats/{code}/now`, `/v1/standings/now`, `/v1/roster/{code}/current`) return 307 redirects to season/date-specific URLs, but Node's built-in fetch follows redirects by default — runtime behavior is fine.
 - **2026-05-09 — Phase 4.** NHL inconsistency: `season` is a `number` in `schedule`/`game`/`playByPlay`/`boxscore` but a `string` in `team` (`/club-stats/.../now`). Schema reflects this. Watch for similar drift in future endpoints.
 - **2026-05-09 — Phase 4.** Skipped Zod regex validation on `[code]` in `team`/`roster` routes. Invalid codes get a clean upstream 404 anyway and the validation would be UX polish, not safety.
+- **2026-05-09 — Phase 5.** Stats endpoints (`api.nhle.com/stats/rest/en/...`) 500 without `cayenneExp` — they're not browseable. Always set `seasonId` + `gameTypeId`.
+- **2026-05-09 — Phase 5.** Sort param: `sort=points` is ascending. To get descending you must JSON-encode `[{"property":"points","direction":"DESC"}]`. Hooks default to descending; route handler forwards whatever the client sends.
+- **2026-05-09 — Phase 5.** TS conditional-type cast in stats fetcher needed `as unknown as z.ZodType<StatsResponseFor<K>>` — the schema map's union type doesn't narrow against the generic `K`. Same `as unknown as` pattern as Phase 0.
