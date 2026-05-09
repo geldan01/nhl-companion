@@ -1,6 +1,7 @@
 "use client";
 
 import { DataState } from "@/components/data-state";
+import { ScoreHeader } from "@/components/game/score-header";
 import { Skeleton } from "@/components/skeleton";
 import { useGame } from "@/lib/nhl/game";
 
@@ -23,12 +24,16 @@ export function GameDetail({ id }: { id: number }) {
         </div>
       }
     >
-      <div className="mx-auto w-full max-w-6xl px-4 py-6">
-        <p className="text-sm text-(--text-muted)">
-          Game {id} — {game.data?.awayTeam.abbrev} @ {game.data?.homeTeam.abbrev}.
-          ScoreHeader, PlaysPane, BoxPane, RinkPane land in 2.4–2.7.
-        </p>
-      </div>
+      {game.data ? (
+        <>
+          <ScoreHeader game={game.data} />
+          <div className="mx-auto w-full max-w-6xl px-4 py-6">
+            <p className="text-sm text-(--text-muted)">
+              Plays / Box / Rink panes land in 2.5–2.7.
+            </p>
+          </div>
+        </>
+      ) : null}
     </DataState>
   );
 }
