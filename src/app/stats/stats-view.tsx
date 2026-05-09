@@ -15,6 +15,7 @@ import {
   useSkaterStats,
   useTeamStats,
 } from "@/lib/nhl/stats";
+import { formatStatsKind, parseStatsKind } from "@/lib/url";
 
 const LIMIT = 50;
 
@@ -24,21 +25,16 @@ const KIND_LABELS: Record<StatsKind, string> = {
   team: "Teams",
 };
 
-function parseKind(value: string | null): StatsKind {
-  return (STATS_KINDS as readonly string[]).includes(value ?? "")
-    ? (value as StatsKind)
-    : "skater";
-}
-
 export function StatsView() {
   const router = useRouter();
   const params = useSearchParams();
-  const kind = parseKind(params.get("kind"));
+  const kind = parseStatsKind(params.get("kind"));
 
   const setKind = (next: StatsKind) => {
     const sp = new URLSearchParams(params);
-    if (next === "skater") sp.delete("kind");
-    else sp.set("kind", next);
+    const formatted = formatStatsKind(next);
+    if (formatted === null) sp.delete("kind");
+    else sp.set("kind", formatted);
     const qs = sp.toString();
     router.replace(qs ? `/stats?${qs}` : "/stats");
   };
@@ -68,7 +64,7 @@ function Tabs({
   onChange: (next: StatsKind) => void;
 }) {
   return (
-    <div className="inline-flex rounded-full border border-[var(--border)] bg-[var(--surface)] p-0.5 text-xs">
+    <div className="inline-flex rounded-full border border-(--border) bg-(--surface) p-0.5 text-xs">
       {STATS_KINDS.map((k) => (
         <button
           key={k}
@@ -76,8 +72,8 @@ function Tabs({
           onClick={() => onChange(k)}
           className={`rounded-full px-3 py-1 transition-colors ${
             kind === k
-              ? "bg-[var(--bg)] text-[var(--text)] shadow-sm"
-              : "text-[var(--text-muted)]"
+              ? "bg-(--bg) text-(--text) shadow-sm"
+              : "text-(--text-muted)"
           }`}
         >
           {KIND_LABELS[k]}
@@ -188,9 +184,9 @@ function Table({
   children: React.ReactNode;
 }) {
   return (
-    <div className="overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)]">
+    <div className="overflow-hidden rounded-lg border border-(--border) bg-(--surface)">
       <table className="w-full text-sm">
-        <thead className="text-xs text-[var(--text-muted)]">{head}</thead>
+        <thead className="text-xs text-(--text-muted)">{head}</thead>
         <tbody>{children}</tbody>
       </table>
     </div>
@@ -211,7 +207,7 @@ function Th({
   return (
     <th
       scope="col"
-      className={`border-b border-[var(--border)] px-2 py-2 ${
+      className={`border-b border-(--border) px-2 py-2 ${
         align === "right" ? "text-right" : "text-left"
       } ${hideClass}`}
     >
@@ -223,8 +219,8 @@ function Th({
 function SkaterRow({ rank, row }: { rank: number; row: SkaterStat }) {
   const team = row.teamAbbrevs.split(",")[0];
   return (
-    <tr className="border-b border-[var(--border)] last:border-0 hover:bg-[var(--surface-hover)]">
-      <td className="px-2 py-2 tabular-nums text-[var(--text-muted)]">{rank}</td>
+    <tr className="border-b border-(--border) last:border-0 hover:bg-(--surface-hover)">
+      <td className="px-2 py-2 tabular-nums text-(--text-muted)">{rank}</td>
       <td className="px-2 py-2">
         <Link
           href={`/player/${row.playerId}`}
@@ -232,7 +228,7 @@ function SkaterRow({ rank, row }: { rank: number; row: SkaterStat }) {
         >
           <TeamLogo code={team} size={20} />
           <span className="font-medium">{row.skaterFullName}</span>
-          <span className="text-[var(--text-muted)]">{row.positionCode}</span>
+          <span className="text-(--text-muted)">{row.positionCode}</span>
         </Link>
       </td>
       <td className="px-2 py-2 text-right tabular-nums">{row.gamesPlayed}</td>
@@ -252,8 +248,8 @@ function SkaterRow({ rank, row }: { rank: number; row: SkaterStat }) {
 function GoalieRow({ rank, row }: { rank: number; row: GoalieStat }) {
   const team = row.teamAbbrevs.split(",")[0];
   return (
-    <tr className="border-b border-[var(--border)] last:border-0 hover:bg-[var(--surface-hover)]">
-      <td className="px-2 py-2 tabular-nums text-[var(--text-muted)]">{rank}</td>
+    <tr className="border-b border-(--border) last:border-0 hover:bg-(--surface-hover)">
+      <td className="px-2 py-2 tabular-nums text-(--text-muted)">{rank}</td>
       <td className="px-2 py-2">
         <Link
           href={`/player/${row.playerId}`}
@@ -283,8 +279,8 @@ function TeamRow({ rank, row }: { rank: number; row: TeamStat }) {
   // Team-stats response gives teamFullName but not abbreviation. Linking by
   // code requires a name→code map we haven't built yet — defer to Phase 3.
   return (
-    <tr className="border-b border-[var(--border)] last:border-0 hover:bg-[var(--surface-hover)]">
-      <td className="px-2 py-2 tabular-nums text-[var(--text-muted)]">{rank}</td>
+    <tr className="border-b border-(--border) last:border-0 hover:bg-(--surface-hover)">
+      <td className="px-2 py-2 tabular-nums text-(--text-muted)">{rank}</td>
       <td className="px-2 py-2 font-medium">{row.teamFullName}</td>
       <td className="px-2 py-2 text-right tabular-nums">{row.gamesPlayed}</td>
       <td className="px-2 py-2 text-right tabular-nums">{row.wins}</td>
