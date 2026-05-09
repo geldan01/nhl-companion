@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { DataState } from "@/components/data-state";
 import { BoxPane } from "@/components/game/box-pane";
 import { GameBody } from "@/components/game/game-body";
@@ -7,6 +8,7 @@ import { PlaysPane } from "@/components/game/plays-pane";
 import { ScoreHeader } from "@/components/game/score-header";
 import { Skeleton } from "@/components/skeleton";
 import { useGame } from "@/lib/nhl/game";
+import { useWatching } from "@/lib/watching";
 
 export function GameDetail({ id }: { id: number }) {
   // useGame is the canonical "is this game even valid" query — a 404 here
@@ -14,6 +16,29 @@ export function GameDetail({ id }: { id: number }) {
   // wired by the panes themselves so they can render skeletons independently
   // (added in 2.6 / 2.7).
   const game = useGame(id);
+  const { setWatching } = useWatching();
+  const data = game.data;
+
+  // Seed the Now-watching pill from the URL: on a deep link or refresh, this
+  // runs once `useGame` lands. The `dataReady` boolean flips false→true once
+  // and never flips back, so the effect runs on (a) URL id change and (b)
+  // initial data arrival — not on every poll. Live score updates are the
+  // pill's own job via its own useGame subscription (2.10).
+  const dataReady = data !== undefined;
+  useEffect(() => {
+    if (!data) return;
+    setWatching({
+      gameId: data.id,
+      away: data.awayTeam.abbrev,
+      home: data.homeTeam.abbrev,
+      awayScore: data.awayTeam.score ?? 0,
+      homeScore: data.homeTeam.score ?? 0,
+      state: data.gameState,
+    });
+    // dataReady is in deps so the effect fires once on data arrival; `data`
+    // itself is intentionally NOT a dep (would re-fire on every poll).
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [id, dataReady, setWatching]);
 
   return (
     <DataState
