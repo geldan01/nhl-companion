@@ -42,3 +42,9 @@ next-env.d.ts
 
 # brainstorming visual companion
 .superpowers/
+
+# playwright
+/test-results/
+/playwright-report/
+/playwright/.cache/
+/blob-report/

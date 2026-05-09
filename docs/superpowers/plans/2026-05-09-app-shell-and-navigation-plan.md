@@ -75,7 +75,7 @@ The skeleton: header, breakpoint nav, and the three top-level pages (Scoreboard 
 
 The headline screen plus the persistent pill behavior. This is also where Playwright lands.
 
-- [ ] **2.1 Install Playwright.** `npm install -D @playwright/test`; `npx playwright install --with-deps chromium` (Chromium only — Firefox/WebKit not needed for a personal-project smoke layer). Add `test:e2e` script to `package.json`: `"test:e2e": "playwright test"`. Commit.
+- [x] **2.1 Install Playwright.** Done. `@playwright/test@1.59.1` added to `devDependencies`. Skipped `--with-deps` (Linux apt-only flag; macOS doesn't need it). `npx playwright install chromium` pulled the Chromium browser + headless-shell binaries to `~/Library/Caches/ms-playwright/` (~258 MiB). Added `test:e2e` script to `package.json`. Vitest's `include` is already scoped to `src/**/*.{test,spec}.{ts,tsx}` so root-level `e2e/*.spec.ts` files won't get picked up by `vitest run` once they exist. Updated `.gitignore` for Playwright outputs (`test-results/`, `playwright-report/`, `playwright/.cache/`, `blob-report/`).
 
 - [ ] **2.2 `playwright.config.ts` + fixtures-server.** Config boots `npm run dev` on a fixed port for tests. The dev server is configured (via env var `NHL_FIXTURES_MODE=1` read in route handlers) to short-circuit upstream NHL calls and serve from `__fixtures__/` directly — no real network in CI. Keep the env-var branching tiny: a single helper in `src/lib/nhl/fetcher.ts` (`if (process.env.NHL_FIXTURES_MODE) return readFixture(...)`) avoids spreading the conditional across every fetcher. Verify locally: `NHL_FIXTURES_MODE=1 npm run dev` then `curl http://localhost:3000/api/nhl/standings` returns the fixture content.
 
