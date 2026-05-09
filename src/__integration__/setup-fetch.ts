@@ -39,16 +39,18 @@ const ROUTES: Route[] = [
       u.pathname === "/api/nhl/stats" && u.searchParams.get("kind") === "team",
     data: teamStats,
   },
+  // Game-related routes are scoped to the fixture's game id (2025030221) so
+  // tests can assert on the empty state by passing an id without a fixture.
   {
     match: (u) =>
-      /^\/api\/nhl\/game\/\d+\/play-by-play$/.test(u.pathname),
+      u.pathname === "/api/nhl/game/2025030221/play-by-play",
     data: playByPlay,
   },
   {
-    match: (u) => /^\/api\/nhl\/game\/\d+\/boxscore$/.test(u.pathname),
+    match: (u) => u.pathname === "/api/nhl/game/2025030221/boxscore",
     data: boxscore,
   },
-  { match: (u) => /^\/api\/nhl\/game\/\d+$/.test(u.pathname), data: game },
+  { match: (u) => u.pathname === "/api/nhl/game/2025030221", data: game },
   {
     match: (u) => /^\/api\/nhl\/team\/[A-Z]+\/roster$/.test(u.pathname),
     data: roster,
