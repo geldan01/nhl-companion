@@ -1,7 +1,7 @@
 # NHL Data Layer — Implementation Plan
 
 **Spec:** [`docs/superpowers/specs/2026-05-09-nhl-data-layer-design.md`](../specs/2026-05-09-nhl-data-layer-design.md)
-**Status:** Phase 2 complete 2026-05-09
+**Status:** Phase 3 complete 2026-05-09
 
 Phases run top-to-bottom. Each step lists files touched, acceptance criteria, and any verification commands. Tick the checkbox when the step is done **and** its acceptance criteria pass.
 
@@ -58,19 +58,14 @@ The three endpoints that exercise the live/final cadence flip. Implementing all 
 
 For each module, repeat the steps from Phase 2 (record fixture, schema + test, fetcher, route, app re-export, hook, index). Plus:
 
-- [ ] **3.1 `game` module.**
-- [ ] **3.2 `playByPlay` module.** Schema must capture `xCoord`, `yCoord`, `details.zoneCode`, `period.periodType`, `period.number`, plus enough context to know home/away sides per period.
-- [ ] **3.3 `boxscore` module.**
-
-- [ ] **3.4 `playByPlay/normalizeShot.ts`.** Pure helper per spec. Tests in `normalizeShot.test.ts`: a handful of (rawX, rawY, period, homeTeamSide) → expected (x, y, side) cases. Covers the period-flip logic.
-
-- [ ] **3.5 Hook cadence-flip test.** Single test file `useGame.test.ts` (or a shared one for all three): render the hook with a `final` fixture → `refetchInterval` resolves to `false`; render with a `live` fixture → resolves to a number. Visibility flip too.
-  - Acceptance: ~3 tests pass.
-
-- [ ] **3.6 Update `lib/nhl/index.ts`.** Add `fetchGame`, `fetchPlayByPlay`, `fetchBoxscore`, `normalizeShot` to escape-hatch exports.
-
-- [ ] **3.7 Commit Phase 3.** Single commit: "feat(nhl): live-game endpoints (game, playByPlay, boxscore) with cadence flip".
-  - Acceptance: tests + lint + build green; manual curl on each endpoint with a real game ID returns JSON.
+- [x] **3.0 Fixtures.** Recorded against game `2025030221` (PHI @ CAR, FINAL/OFF). Sizes: `game.json` 878 lines, `playByPlay.json` 8821 lines (359 plays + 40 rosterSpots), `boxscore.json` 1000 lines.
+- [x] **3.1 `game` module.** Done.
+- [x] **3.2 `playByPlay` module.** Done. Schema validates 359 plays + 40 rosterSpots; goal events expose `details.xCoord`/`yCoord`/`zoneCode` and `homeTeamDefendingSide`.
+- [x] **3.3 `boxscore` module.** Done. `playerByGameStats` split by team into forwards/defense/goalies.
+- [x] **3.4 `playByPlay/normalizeShot.ts`.** Pure helper. 9 tests cover home/away shooters, both defending sides, period rotation (y flips with x via 180° rotation), out-of-rink clamping, and missing-coord null cases.
+- [x] **3.5 Hook cadence-flip tests.** Implemented as pure-function tests on `gamePollMs`, `playByPlayPollMs`, `boxscorePollMs` exported from each hook — avoids React Query / fake-timer fragility. Single `cadence.test.ts`, 6 tests, covers LIVE/CRIT/FINAL/OFF/FUT/PRE/hidden-tab/undefined-state.
+- [x] **3.6 Update `lib/nhl/index.ts`.** Done — `fetchGame`, `fetchPlayByPlay`, `fetchBoxscore`, `normalizeShot` re-exported.
+- [x] **3.7 Commit Phase 3.** Commit `9d461e9`. 41 tests green, lint + build clean. All three routes verified live.
 
 ---
 
@@ -143,3 +138,6 @@ Use this section as a scratchpad while implementing — surprises, decisions, th
 - **2026-05-09 — Phase 1.** "Today" is computed via UTC `YYYY-MM-DD` — server and client agree, but it'll flip a few hours off local time near midnight. Acceptable for a freshness/poll heuristic; revisit if it ever surfaces a real bug.
 - **2026-05-09 — Phase 2.** Next 16 route handler params are async — `RouteContext<'/path/[param]'>` + `await ctx.params`. Documented in `node_modules/next/dist/docs/01-app/01-getting-started/15-route-handlers.md`. Worth re-reading before adding more routes.
 - **2026-05-09 — Phase 2.** Schema is intentionally narrow: we only `require` the fields the UI plans to consume; everything else flows through unchanged via `.passthrough()`. `awayTeam.score`/`homeTeam.score` are optional because they're absent on FUT (future) games — reproduce only when both are non-FUT.
+- **2026-05-09 — Phase 3.** Server-side TTL for game/playByPlay/boxscore: the route handler doesn't know `gameState` ahead of fetch. The route accepts `?state=` from the client as a hint; if absent, the fetcher defaults to `'LIVE'` (i.e. `no-store`). The cadence flip lives in the hook, which is canonical. Server cache is a best-effort optimization for finished games and not currently exercised — minor extra upstream calls only.
+- **2026-05-09 — Phase 3.** Cadence-flip tests: implemented as pure-function unit tests on each hook's exported `<thing>PollMs(state, visible)` instead of rendering the hook + manipulating fake timers. Cleaner, deterministic, and the hook composes the helper trivially via `query.state.data?.gameState`.
+- **2026-05-09 — Phase 3.** `normalizeShot` rotates by 180° (flips both x and y) when shooter attacks left, not just x. Reasoning: the rink is symmetric about both axes and the canonical "shooter attacks right" view is a 180° rotation of the alternate side, not a horizontal mirror. Test 4 in `normalizeShot.test.ts` is the assertion that y flips.
