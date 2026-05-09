@@ -264,7 +264,7 @@ Each row is one module unless noted. Paths show the upstream NHL endpoint we wra
 | Module | Upstream | Notes |
 |---|---|---|
 | `schedule` | `api-web /v1/schedule/{date}` | Date in `YYYY-MM-DD`. |
-| `scheduleNow` | `api-web /v1/schedule-now` | Convenience for "current week starting today." |
+| `scheduleNow` | `api-web /v1/schedule/now` | Convenience for "current week starting today." |
 | `game` | `api-web /v1/gamecenter/{id}/landing` | Top-level game state — score, period, clock, teams, scratches. |
 | `playByPlay` | `api-web /v1/gamecenter/{id}/play-by-play` | All plays + shot coordinates. The big one. |
 | `boxscore` | `api-web /v1/gamecenter/{id}/boxscore` | Per-skater + per-goalie stats. |
