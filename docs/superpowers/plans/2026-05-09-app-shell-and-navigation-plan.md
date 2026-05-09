@@ -47,7 +47,7 @@ The skeleton: header, breakpoint nav, and the three top-level pages (Scoreboard 
 
 - [x] **1.2 `WatchingProvider` in `src/lib/watching/provider.tsx`.** Done. Context value `{ watching, setWatching, clearWatching }`; `WatchingSnapshot` type exported alongside (uses `KnownGameState | string` for the state field — narrow when known, permissive for forward compat). `useWatching()` throws with a clear message when called outside the provider. `useCallback`/`useMemo` keep value identity stable so consumers don't re-render on unrelated state changes. Public surface re-exported from `src/lib/watching/index.ts`. 5 tests cover the full lifecycle: initial null, set, clear, multi-consumer sync, and the "throws outside provider" guard.
 
-- [ ] **1.3 Mount `WatchingProvider` in `src/app/layout.tsx`.** Wraps `{children}` inside the existing `<NhlQueryProvider>`. Safe — pure client-side state.
+- [x] **1.3 Mount `WatchingProvider` in `src/app/layout.tsx`.** Done. Sits inside `<NhlQueryProvider>` so the pill (which subscribes to `useGame` in 2.10) has React Query available. Also updated `metadata` (title/description) which still said "Create Next App".
 
 - [ ] **1.4 `<AppShell>` in `src/components/app-shell.tsx`.** Renders the header (logo on the left, `<NowWatchingPill>` slot on the right) + the breakpoint nav (bottom bar `<lg`, sidebar `>=lg`) + `<main>`. Used by `app/layout.tsx` to wrap `{children}`. Use Tailwind `lg:` breakpoint and `fixed bottom-0` for the bottom bar with `pb-[env(safe-area-inset-bottom)]`.
 
