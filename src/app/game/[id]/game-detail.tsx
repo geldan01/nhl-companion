@@ -2,6 +2,7 @@
 
 import { DataState } from "@/components/data-state";
 import { GameBody } from "@/components/game/game-body";
+import { PlaysPane } from "@/components/game/plays-pane";
 import { ScoreHeader } from "@/components/game/score-header";
 import { Skeleton } from "@/components/skeleton";
 import { useGame } from "@/lib/nhl/game";
@@ -29,7 +30,7 @@ export function GameDetail({ id }: { id: number }) {
         <>
           <ScoreHeader game={game.data} />
           <GameBody
-            plays={<PanePlaceholder>Plays pane lands in 2.6.</PanePlaceholder>}
+            plays={<PlaysPane id={id} />}
             box={<PanePlaceholder>Box pane lands in 2.7.</PanePlaceholder>}
             rink={<PanePlaceholder>Shot map lands in Phase 4.</PanePlaceholder>}
           />
