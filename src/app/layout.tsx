@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { AppShell } from "@/components/app-shell";
 import { NhlQueryProvider } from "@/lib/nhl/client";
 import { WatchingProvider } from "@/lib/watching";
 import "./globals.css";
@@ -31,7 +32,9 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <NhlQueryProvider>
-          <WatchingProvider>{children}</WatchingProvider>
+          <WatchingProvider>
+            <AppShell>{children}</AppShell>
+          </WatchingProvider>
         </NhlQueryProvider>
       </body>
     </html>
