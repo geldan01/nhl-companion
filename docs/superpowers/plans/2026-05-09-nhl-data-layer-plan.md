@@ -1,7 +1,7 @@
 # NHL Data Layer — Implementation Plan
 
 **Spec:** [`docs/superpowers/specs/2026-05-09-nhl-data-layer-design.md`](../specs/2026-05-09-nhl-data-layer-design.md)
-**Status:** Phase 3 complete 2026-05-09
+**Status:** Phase 4 complete 2026-05-09
 
 Phases run top-to-bottom. Each step lists files touched, acceptance criteria, and any verification commands. Tick the checkbox when the step is done **and** its acceptance criteria pass.
 
@@ -73,14 +73,13 @@ For each module, repeat the steps from Phase 2 (record fixture, schema + test, f
 
 These all share the same boring pattern — no live cadence flip. Quick to land in one phase.
 
-- [ ] **4.1 `scheduleNow` module.** Wraps `/v1/schedule-now`. Same pattern as `schedule` but no `[date]` param.
-- [ ] **4.2 `team` module.** Wraps `/v1/club-stats/{code}/now`. Param is uppercase team code; validate with a Zod regex (`/^[A-Z]{3}$/`).
-- [ ] **4.3 `roster` module.** Wraps `/v1/roster/{code}/current`.
-- [ ] **4.4 `player` module.** Wraps `/v1/player/{id}/landing`. Param is numeric ID; validate with Zod.
-- [ ] **4.5 `standings` module.** Wraps `/v1/standings/now`. No params.
-- [ ] **4.6 Update `lib/nhl/index.ts`.** Add server fetchers to escape-hatch exports.
-- [ ] **4.7 Commit Phase 4.** Single commit: "feat(nhl): static endpoints (scheduleNow, team, roster, player, standings)".
-  - Acceptance: schema test passes for each; tests + lint + build green; one manual curl per route confirms upstream wiring.
+- [x] **4.1 `scheduleNow` module.** Done. Wraps `/v1/schedule/now` (NOT `/v1/schedule-now` as the spec said — that path 404s; spec corrected). Reuses `ScheduleResponse` from the schedule module since shape is identical.
+- [x] **4.2 `team` module.** Done. Wraps `/v1/club-stats/{CODE}/now`. Schema accepts `season: string` (NHL inconsistency vs. number elsewhere). No regex validation on team code at the route — invalid codes naturally surface as upstream 404 with a clean error body.
+- [x] **4.3 `roster` module.** Done. Wraps `/v1/roster/{CODE}/current`. forwards/defensemen/goalies arrays.
+- [x] **4.4 `player` module.** Done. Wraps `/v1/player/{id}/landing`. Route rejects non-numeric `id` with a 400 before reaching NHL.
+- [x] **4.5 `standings` module.** Done. Wraps `/v1/standings/now`. `teamAbbrev`/`teamName`/`teamCommonName`/`placeName` are all `LocalizedString` shaped (`{ default, ... }`), not plain strings.
+- [x] **4.6 Update `lib/nhl/index.ts`.** Done — `fetchScheduleNow`, `fetchTeam`, `fetchRoster`, `fetchPlayer`, `fetchStandings` re-exported.
+- [x] **4.7 Commit Phase 4.** Commit `0d10d8e`. 46 tests green, lint + build clean, all 5 endpoints verified live.
 
 ---
 
@@ -141,3 +140,6 @@ Use this section as a scratchpad while implementing — surprises, decisions, th
 - **2026-05-09 — Phase 3.** Server-side TTL for game/playByPlay/boxscore: the route handler doesn't know `gameState` ahead of fetch. The route accepts `?state=` from the client as a hint; if absent, the fetcher defaults to `'LIVE'` (i.e. `no-store`). The cadence flip lives in the hook, which is canonical. Server cache is a best-effort optimization for finished games and not currently exercised — minor extra upstream calls only.
 - **2026-05-09 — Phase 3.** Cadence-flip tests: implemented as pure-function unit tests on each hook's exported `<thing>PollMs(state, visible)` instead of rendering the hook + manipulating fake timers. Cleaner, deterministic, and the hook composes the helper trivially via `query.state.data?.gameState`.
 - **2026-05-09 — Phase 3.** `normalizeShot` rotates by 180° (flips both x and y) when shooter attacks left, not just x. Reasoning: the rink is symmetric about both axes and the canonical "shooter attacks right" view is a 180° rotation of the alternate side, not a horizontal mirror. Test 4 in `normalizeShot.test.ts` is the assertion that y flips.
+- **2026-05-09 — Phase 4.** Spec deviation: `/v1/schedule-now` (as listed in the design doc) doesn't exist; the working endpoint is `/v1/schedule/now`. Several other "/now" endpoints (`/v1/club-stats/{code}/now`, `/v1/standings/now`, `/v1/roster/{code}/current`) return 307 redirects to season/date-specific URLs, but Node's built-in fetch follows redirects by default — runtime behavior is fine.
+- **2026-05-09 — Phase 4.** NHL inconsistency: `season` is a `number` in `schedule`/`game`/`playByPlay`/`boxscore` but a `string` in `team` (`/club-stats/.../now`). Schema reflects this. Watch for similar drift in future endpoints.
+- **2026-05-09 — Phase 4.** Skipped Zod regex validation on `[code]` in `team`/`roster` routes. Invalid codes get a clean upstream 404 anyway and the validation would be UX polish, not safety.
