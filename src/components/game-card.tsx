@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import type { ScheduleGame } from "@/lib/nhl/schedule";
+import { useWatching } from "@/lib/watching";
 import { GameStatePill } from "./game-state-pill";
 import { TeamLogo } from "./team-logo";
 
@@ -9,10 +12,24 @@ export type GameCardProps = {
 };
 
 export function GameCard({ game, className }: GameCardProps) {
+  const { setWatching } = useWatching();
   const { away, home } = sides(game);
+
+  const handleClick = () => {
+    setWatching({
+      gameId: game.id,
+      away: away.abbrev,
+      home: home.abbrev,
+      awayScore: away.score ?? 0,
+      homeScore: home.score ?? 0,
+      state: game.gameState,
+    });
+  };
+
   return (
     <Link
       href={`/game/${game.id}`}
+      onClick={handleClick}
       className={`flex flex-col gap-3 rounded-lg border border-(--border) bg-(--surface) p-4 transition-colors hover:bg-(--surface-hover) ${className ?? ""}`}
     >
       <div className="flex items-center justify-between">
