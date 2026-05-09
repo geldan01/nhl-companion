@@ -9,3 +9,7 @@ export { nhlFetch, type NhlFetchOpts } from './fetcher';
 // UI should prefer the per-module hooks (`useSchedule`, etc.) imported directly
 // from each module's index.ts.
 export { fetchSchedule } from './schedule/fetcher';
+export { fetchGame } from './game/fetcher';
+export { fetchPlayByPlay } from './playByPlay/fetcher';
+export { fetchBoxscore } from './boxscore/fetcher';
+export { normalizeShot, type NormalizedShot } from './playByPlay/normalizeShot';

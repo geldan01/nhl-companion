@@ -1,0 +1,878 @@
+{
+    "id": 2025030221,
+    "season": 20252026,
+    "gameType": 3,
+    "limitedScoring": false,
+    "gameDate": "2026-05-02",
+    "venue": {
+        "default": "Lenovo Center"
+    },
+    "venueLocation": {
+        "default": "Raleigh"
+    },
+    "startTimeUTC": "2026-05-03T00:00:00Z",
+    "easternUTCOffset": "-04:00",
+    "venueUTCOffset": "-04:00",
+    "venueTimezone": "US/Eastern",
+    "periodDescriptor": {
+        "number": 3,
+        "periodType": "REG",
+        "maxRegulationPeriods": 3
+    },
+    "tvBroadcasts": [
+        {
+            "id": 384,
+            "market": "N",
+            "countryCode": "US",
+            "network": "ABC",
+            "sequenceNumber": 1
+        },
+        {
+            "id": 282,
+            "market": "N",
+            "countryCode": "CA",
+            "network": "SN",
+            "sequenceNumber": 107
+        },
+        {
+            "id": 281,
+            "market": "N",
+            "countryCode": "CA",
+            "network": "TVAS",
+            "sequenceNumber": 120
+        }
+    ],
+    "gameState": "OFF",
+    "gameScheduleState": "OK",
+    "awayTeam": {
+        "id": 4,
+        "commonName": {
+            "default": "Flyers"
+        },
+        "abbrev": "PHI",
+        "placeName": {
+            "default": "Philadelphia",
+            "fr": "Philadelphie"
+        },
+        "placeNameWithPreposition": {
+            "default": "Philadelphia",
+            "fr": "de Philadelphie"
+        },
+        "score": 0,
+        "sog": 19,
+        "logo": "https://assets.nhle.com/logos/nhl/svg/PHI_light.svg",
+        "darkLogo": "https://assets.nhle.com/logos/nhl/svg/PHI_dark.svg"
+    },
+    "homeTeam": {
+        "id": 12,
+        "commonName": {
+            "default": "Hurricanes"
+        },
+        "abbrev": "CAR",
+        "placeName": {
+            "default": "Carolina",
+            "fr": "Caroline"
+        },
+        "placeNameWithPreposition": {
+            "default": "Carolina",
+            "fr": "de la Caroline"
+        },
+        "score": 3,
+        "sog": 23,
+        "logo": "https://assets.nhle.com/logos/nhl/svg/CAR_light.svg",
+        "darkLogo": "https://assets.nhle.com/logos/nhl/svg/CAR_dark.svg"
+    },
+    "shootoutInUse": false,
+    "regPeriods": 3,
+    "otInUse": true,
+    "tiesInUse": false,
+    "summary": {
+        "scoring": [
+            {
+                "periodDescriptor": {
+                    "number": 1,
+                    "periodType": "REG",
+                    "maxRegulationPeriods": 3
+                },
+                "goals": [
+                    {
+                        "situationCode": "1551",
+                        "eventId": 71,
+                        "strength": "ev",
+                        "playerId": 8482702,
+                        "firstName": {
+                            "default": "Logan"
+                        },
+                        "lastName": {
+                            "default": "Stankoven"
+                        },
+                        "name": {
+                            "default": "L. Stankoven"
+                        },
+                        "teamAbbrev": {
+                            "default": "CAR"
+                        },
+                        "headshot": "https://assets.nhle.com/mugs/nhl/20252026/CAR/8482702.png",
+                        "highlightClipSharingUrl": "https://nhl.com/video/logan-stankoven-with-a-goal-vs-philadelphia-flyers-6394454113112",
+                        "highlightClipSharingUrlFr": "https://nhl.com/fr/video/logan-stankoven-with-a-but-vs-les-flyers-de-philadelphie-6394455084112",
+                        "highlightClip": 6394454113112,
+                        "highlightClipFr": 6394455084112,
+                        "discreteClip": 6394455184112,
+                        "discreteClipFr": 6394456351112,
+                        "goalsToDate": 5,
+                        "awayScore": 0,
+                        "homeScore": 1,
+                        "leadingTeamAbbrev": {
+                            "default": "CAR"
+                        },
+                        "timeInPeriod": "01:31",
+                        "shotType": "tip-in",
+                        "goalModifier": "none",
+                        "assists": [
+                            {
+                                "playerId": 8476422,
+                                "firstName": {
+                                    "default": "Mike"
+                                },
+                                "lastName": {
+                                    "default": "Reilly"
+                                },
+                                "name": {
+                                    "default": "M. Reilly"
+                                },
+                                "assistsToDate": 1,
+                                "sweaterNumber": 6
+                            },
+                            {
+                                "playerId": 8482809,
+                                "firstName": {
+                                    "default": "Jackson"
+                                },
+                                "lastName": {
+                                    "default": "Blake"
+                                },
+                                "name": {
+                                    "default": "J. Blake"
+                                },
+                                "assistsToDate": 4,
+                                "sweaterNumber": 53
+                            }
+                        ],
+                        "pptReplayUrl": "https://wsr.nhle.com/sprites/20252026/2025030221/ev71.json",
+                        "homeTeamDefendingSide": "right",
+                        "isHome": true
+                    },
+                    {
+                        "situationCode": "1551",
+                        "eventId": 251,
+                        "strength": "ev",
+                        "playerId": 8482809,
+                        "firstName": {
+                            "default": "Jackson"
+                        },
+                        "lastName": {
+                            "default": "Blake"
+                        },
+                        "name": {
+                            "default": "J. Blake"
+                        },
+                        "teamAbbrev": {
+                            "default": "CAR"
+                        },
+                        "headshot": "https://assets.nhle.com/mugs/nhl/20252026/CAR/8482809.png",
+                        "highlightClipSharingUrl": "https://nhl.com/video/phi-car-blake-scores-goal-against-dan-vladar-6394455100112",
+                        "highlightClipSharingUrlFr": "https://nhl.com/fr/video/phi-car-blake-marque-un-but-contre-dan-vladar-6394456565112",
+                        "highlightClip": 6394455100112,
+                        "highlightClipFr": 6394456565112,
+                        "discreteClip": 6394455700112,
+                        "discreteClipFr": 6394455493112,
+                        "goalsToDate": 2,
+                        "awayScore": 0,
+                        "homeScore": 2,
+                        "leadingTeamAbbrev": {
+                            "default": "CAR"
+                        },
+                        "timeInPeriod": "07:30",
+                        "shotType": "backhand",
+                        "goalModifier": "none",
+                        "assists": [
+                            {
+                                "playerId": 8475791,
+                                "firstName": {
+                                    "default": "Taylor"
+                                },
+                                "lastName": {
+                                    "default": "Hall"
+                                },
+                                "name": {
+                                    "default": "T. Hall"
+                                },
+                                "assistsToDate": 6,
+                                "sweaterNumber": 71
+                            },
+                            {
+                                "playerId": 8476422,
+                                "firstName": {
+                                    "default": "Mike"
+                                },
+                                "lastName": {
+                                    "default": "Reilly"
+                                },
+                                "name": {
+                                    "default": "M. Reilly"
+                                },
+                                "assistsToDate": 2,
+                                "sweaterNumber": 6
+                            }
+                        ],
+                        "pptReplayUrl": "https://wsr.nhle.com/sprites/20252026/2025030221/ev251.json",
+                        "homeTeamDefendingSide": "right",
+                        "isHome": true
+                    }
+                ]
+            },
+            {
+                "periodDescriptor": {
+                    "number": 2,
+                    "periodType": "REG",
+                    "maxRegulationPeriods": 3
+                },
+                "goals": [
+                    {
+                        "situationCode": "1551",
+                        "eventId": 719,
+                        "strength": "ev",
+                        "playerId": 8482702,
+                        "firstName": {
+                            "default": "Logan"
+                        },
+                        "lastName": {
+                            "default": "Stankoven"
+                        },
+                        "name": {
+                            "default": "L. Stankoven"
+                        },
+                        "teamAbbrev": {
+                            "default": "CAR"
+                        },
+                        "headshot": "https://assets.nhle.com/mugs/nhl/20252026/CAR/8482702.png",
+                        "highlightClipSharingUrl": "https://nhl.com/video/phi-car-stankoven-scores-goal-against-dan-vladar-6394458164112",
+                        "highlightClipSharingUrlFr": "https://nhl.com/fr/video/phi-car-stankoven-marque-un-but-contre-dan-vladar-6394458449112",
+                        "highlightClip": 6394458164112,
+                        "highlightClipFr": 6394458449112,
+                        "discreteClip": 6394458723112,
+                        "discreteClipFr": 6394459010112,
+                        "goalsToDate": 6,
+                        "awayScore": 0,
+                        "homeScore": 3,
+                        "leadingTeamAbbrev": {
+                            "default": "CAR"
+                        },
+                        "timeInPeriod": "16:16",
+                        "shotType": "snap",
+                        "goalModifier": "none",
+                        "assists": [
+                            {
+                                "playerId": 8482093,
+                                "firstName": {
+                                    "default": "Seth"
+                                },
+                                "lastName": {
+                                    "default": "Jarvis"
+                                },
+                                "name": {
+                                    "default": "S. Jarvis"
+                                },
+                                "assistsToDate": 3,
+                                "sweaterNumber": 24
+                            },
+                            {
+                                "playerId": 8480830,
+                                "firstName": {
+                                    "default": "Andrei",
+                                    "cs": "Andrej",
+                                    "sk": "Andrej"
+                                },
+                                "lastName": {
+                                    "default": "Svechnikov",
+                                    "cs": "Sve\u010dnikov",
+                                    "fi": "Svetshnikov",
+                                    "sk": "Sve\u010dnikov"
+                                },
+                                "name": {
+                                    "default": "A. Svechnikov",
+                                    "cs": "A. Sve\u010dnikov",
+                                    "fi": "A. Svetshnikov",
+                                    "sk": "A. Sve\u010dnikov"
+                                },
+                                "assistsToDate": 1,
+                                "sweaterNumber": 37
+                            }
+                        ],
+                        "pptReplayUrl": "https://wsr.nhle.com/sprites/20252026/2025030221/ev719.json",
+                        "homeTeamDefendingSide": "left",
+                        "isHome": true
+                    }
+                ]
+            },
+            {
+                "periodDescriptor": {
+                    "number": 3,
+                    "periodType": "REG",
+                    "maxRegulationPeriods": 3
+                },
+                "goals": []
+            }
+        ],
+        "threeStars": [
+            {
+                "star": 1,
+                "playerId": 8482702,
+                "teamAbbrev": "CAR",
+                "headshot": "https://assets.nhle.com/mugs/nhl/20252026/CAR/8482702.png",
+                "name": {
+                    "default": "L. Stankoven"
+                },
+                "sweaterNo": 22,
+                "position": "C",
+                "goals": 2,
+                "assists": 0,
+                "points": 2
+            },
+            {
+                "star": 2,
+                "playerId": 8482809,
+                "teamAbbrev": "CAR",
+                "headshot": "https://assets.nhle.com/mugs/nhl/20252026/CAR/8482809.png",
+                "name": {
+                    "default": "J. Blake"
+                },
+                "sweaterNo": 53,
+                "position": "R",
+                "goals": 1,
+                "assists": 1,
+                "points": 2
+            },
+            {
+                "star": 3,
+                "playerId": 8476422,
+                "teamAbbrev": "CAR",
+                "headshot": "https://assets.nhle.com/mugs/nhl/20252026/CAR/8476422.png",
+                "name": {
+                    "default": "M. Reilly"
+                },
+                "sweaterNo": 6,
+                "position": "D",
+                "goals": 0,
+                "assists": 2,
+                "points": 2
+            }
+        ],
+        "penalties": [
+            {
+                "periodDescriptor": {
+                    "number": 1,
+                    "periodType": "REG",
+                    "maxRegulationPeriods": 3
+                },
+                "penalties": [
+                    {
+                        "timeInPeriod": "08:34",
+                        "type": "MIN",
+                        "duration": 2,
+                        "committedByPlayer": {
+                            "firstName": {
+                                "default": "Nick"
+                            },
+                            "lastName": {
+                                "default": "Seeler"
+                            },
+                            "sweaterNumber": 24
+                        },
+                        "teamAbbrev": {
+                            "default": "PHI"
+                        },
+                        "drawnBy": {
+                            "firstName": {
+                                "default": "Mark"
+                            },
+                            "lastName": {
+                                "default": "Jankowski"
+                            },
+                            "sweaterNumber": 77
+                        },
+                        "descKey": "cross-checking"
+                    },
+                    {
+                        "timeInPeriod": "12:28",
+                        "type": "MIN",
+                        "duration": 2,
+                        "committedByPlayer": {
+                            "firstName": {
+                                "default": "Jordan"
+                            },
+                            "lastName": {
+                                "default": "Martinook"
+                            },
+                            "sweaterNumber": 48
+                        },
+                        "teamAbbrev": {
+                            "default": "CAR"
+                        },
+                        "drawnBy": {
+                            "firstName": {
+                                "default": "Nick"
+                            },
+                            "lastName": {
+                                "default": "Seeler"
+                            },
+                            "sweaterNumber": 24
+                        },
+                        "descKey": "high-sticking"
+                    },
+                    {
+                        "timeInPeriod": "15:04",
+                        "type": "MIN",
+                        "duration": 2,
+                        "committedByPlayer": {
+                            "firstName": {
+                                "default": "Mike"
+                            },
+                            "lastName": {
+                                "default": "Reilly"
+                            },
+                            "sweaterNumber": 6
+                        },
+                        "teamAbbrev": {
+                            "default": "CAR"
+                        },
+                        "drawnBy": {
+                            "firstName": {
+                                "default": "Matvei",
+                                "cs": "Matvej",
+                                "sk": "Matvej"
+                            },
+                            "lastName": {
+                                "default": "Michkov",
+                                "cs": "Mi\u010dkov",
+                                "fi": "Mitshkov",
+                                "sk": "Mi\u010dkov"
+                            },
+                            "sweaterNumber": 39
+                        },
+                        "descKey": "cross-checking"
+                    }
+                ]
+            },
+            {
+                "periodDescriptor": {
+                    "number": 2,
+                    "periodType": "REG",
+                    "maxRegulationPeriods": 3
+                },
+                "penalties": [
+                    {
+                        "timeInPeriod": "02:15",
+                        "type": "MIN",
+                        "duration": 2,
+                        "committedByPlayer": {
+                            "firstName": {
+                                "default": "Frederik"
+                            },
+                            "lastName": {
+                                "default": "Andersen"
+                            },
+                            "sweaterNumber": 31
+                        },
+                        "teamAbbrev": {
+                            "default": "CAR"
+                        },
+                        "drawnBy": {
+                            "firstName": {
+                                "default": "Porter"
+                            },
+                            "lastName": {
+                                "default": "Martone"
+                            },
+                            "sweaterNumber": 94
+                        },
+                        "descKey": "tripping",
+                        "servedBy": {
+                            "default": "A. Svechnikov",
+                            "cs": "A. Sve\u010dnikov",
+                            "fi": "A. Svetshnikov",
+                            "sk": "A. Sve\u010dnikov"
+                        }
+                    },
+                    {
+                        "timeInPeriod": "08:46",
+                        "type": "MIN",
+                        "duration": 2,
+                        "committedByPlayer": {
+                            "firstName": {
+                                "default": "Garnet"
+                            },
+                            "lastName": {
+                                "default": "Hathaway"
+                            },
+                            "sweaterNumber": 19
+                        },
+                        "teamAbbrev": {
+                            "default": "PHI"
+                        },
+                        "drawnBy": {
+                            "firstName": {
+                                "default": "William"
+                            },
+                            "lastName": {
+                                "default": "Carrier"
+                            },
+                            "sweaterNumber": 28
+                        },
+                        "descKey": "slashing"
+                    },
+                    {
+                        "timeInPeriod": "19:15",
+                        "type": "MIN",
+                        "duration": 2,
+                        "committedByPlayer": {
+                            "firstName": {
+                                "default": "Tyson"
+                            },
+                            "lastName": {
+                                "default": "Foerster"
+                            },
+                            "sweaterNumber": 71
+                        },
+                        "teamAbbrev": {
+                            "default": "PHI"
+                        },
+                        "drawnBy": {
+                            "firstName": {
+                                "default": "Andrei",
+                                "cs": "Andrej",
+                                "sk": "Andrej"
+                            },
+                            "lastName": {
+                                "default": "Svechnikov",
+                                "cs": "Sve\u010dnikov",
+                                "fi": "Svetshnikov",
+                                "sk": "Sve\u010dnikov"
+                            },
+                            "sweaterNumber": 37
+                        },
+                        "descKey": "slashing"
+                    }
+                ]
+            },
+            {
+                "periodDescriptor": {
+                    "number": 3,
+                    "periodType": "REG",
+                    "maxRegulationPeriods": 3
+                },
+                "penalties": [
+                    {
+                        "timeInPeriod": "07:25",
+                        "type": "MIN",
+                        "duration": 2,
+                        "committedByPlayer": {
+                            "firstName": {
+                                "default": "Taylor"
+                            },
+                            "lastName": {
+                                "default": "Hall"
+                            },
+                            "sweaterNumber": 71
+                        },
+                        "teamAbbrev": {
+                            "default": "CAR"
+                        },
+                        "drawnBy": {
+                            "firstName": {
+                                "default": "Porter"
+                            },
+                            "lastName": {
+                                "default": "Martone"
+                            },
+                            "sweaterNumber": 94
+                        },
+                        "descKey": "roughing"
+                    },
+                    {
+                        "timeInPeriod": "07:25",
+                        "type": "MIN",
+                        "duration": 2,
+                        "committedByPlayer": {
+                            "firstName": {
+                                "default": "Porter"
+                            },
+                            "lastName": {
+                                "default": "Martone"
+                            },
+                            "sweaterNumber": 94
+                        },
+                        "teamAbbrev": {
+                            "default": "PHI"
+                        },
+                        "drawnBy": {
+                            "firstName": {
+                                "default": "Taylor"
+                            },
+                            "lastName": {
+                                "default": "Hall"
+                            },
+                            "sweaterNumber": 71
+                        },
+                        "descKey": "roughing"
+                    },
+                    {
+                        "timeInPeriod": "11:46",
+                        "type": "MIN",
+                        "duration": 2,
+                        "committedByPlayer": {
+                            "firstName": {
+                                "default": "Trevor"
+                            },
+                            "lastName": {
+                                "default": "Zegras"
+                            },
+                            "sweaterNumber": 46
+                        },
+                        "teamAbbrev": {
+                            "default": "PHI"
+                        },
+                        "drawnBy": {
+                            "firstName": {
+                                "default": "Jackson"
+                            },
+                            "lastName": {
+                                "default": "Blake"
+                            },
+                            "sweaterNumber": 53
+                        },
+                        "descKey": "roughing"
+                    },
+                    {
+                        "timeInPeriod": "11:46",
+                        "type": "MIN",
+                        "duration": 2,
+                        "committedByPlayer": {
+                            "firstName": {
+                                "default": "Trevor"
+                            },
+                            "lastName": {
+                                "default": "Zegras"
+                            },
+                            "sweaterNumber": 46
+                        },
+                        "teamAbbrev": {
+                            "default": "PHI"
+                        },
+                        "drawnBy": {
+                            "firstName": {
+                                "default": "Jackson"
+                            },
+                            "lastName": {
+                                "default": "Blake"
+                            },
+                            "sweaterNumber": 53
+                        },
+                        "descKey": "slashing"
+                    },
+                    {
+                        "timeInPeriod": "11:46",
+                        "type": "MIN",
+                        "duration": 2,
+                        "committedByPlayer": {
+                            "firstName": {
+                                "default": "Jackson"
+                            },
+                            "lastName": {
+                                "default": "Blake"
+                            },
+                            "sweaterNumber": 53
+                        },
+                        "teamAbbrev": {
+                            "default": "CAR"
+                        },
+                        "drawnBy": {
+                            "firstName": {
+                                "default": "Trevor"
+                            },
+                            "lastName": {
+                                "default": "Zegras"
+                            },
+                            "sweaterNumber": 46
+                        },
+                        "descKey": "roughing"
+                    },
+                    {
+                        "timeInPeriod": "11:46",
+                        "type": "MIN",
+                        "duration": 2,
+                        "committedByPlayer": {
+                            "firstName": {
+                                "default": "Taylor"
+                            },
+                            "lastName": {
+                                "default": "Hall"
+                            },
+                            "sweaterNumber": 71
+                        },
+                        "teamAbbrev": {
+                            "default": "CAR"
+                        },
+                        "drawnBy": {
+                            "firstName": {
+                                "default": "Travis"
+                            },
+                            "lastName": {
+                                "default": "Konecny"
+                            },
+                            "sweaterNumber": 11
+                        },
+                        "descKey": "roughing"
+                    },
+                    {
+                        "timeInPeriod": "11:46",
+                        "type": "MIN",
+                        "duration": 2,
+                        "committedByPlayer": {
+                            "firstName": {
+                                "default": "Travis"
+                            },
+                            "lastName": {
+                                "default": "Konecny"
+                            },
+                            "sweaterNumber": 11
+                        },
+                        "teamAbbrev": {
+                            "default": "PHI"
+                        },
+                        "drawnBy": {
+                            "firstName": {
+                                "default": "Taylor"
+                            },
+                            "lastName": {
+                                "default": "Hall"
+                            },
+                            "sweaterNumber": 71
+                        },
+                        "descKey": "roughing"
+                    },
+                    {
+                        "timeInPeriod": "11:46",
+                        "type": "MIS",
+                        "duration": 10,
+                        "committedByPlayer": {
+                            "firstName": {
+                                "default": "Trevor"
+                            },
+                            "lastName": {
+                                "default": "Zegras"
+                            },
+                            "sweaterNumber": 46
+                        },
+                        "teamAbbrev": {
+                            "default": "PHI"
+                        },
+                        "descKey": "misconduct"
+                    },
+                    {
+                        "timeInPeriod": "11:46",
+                        "type": "MIS",
+                        "duration": 10,
+                        "committedByPlayer": {
+                            "firstName": {
+                                "default": "Jackson"
+                            },
+                            "lastName": {
+                                "default": "Blake"
+                            },
+                            "sweaterNumber": 53
+                        },
+                        "teamAbbrev": {
+                            "default": "CAR"
+                        },
+                        "descKey": "misconduct"
+                    },
+                    {
+                        "timeInPeriod": "13:40",
+                        "type": "MIS",
+                        "duration": 10,
+                        "committedByPlayer": {
+                            "firstName": {
+                                "default": "Shayne"
+                            },
+                            "lastName": {
+                                "default": "Gostisbehere"
+                            },
+                            "sweaterNumber": 4
+                        },
+                        "teamAbbrev": {
+                            "default": "CAR"
+                        },
+                        "descKey": "misconduct"
+                    },
+                    {
+                        "timeInPeriod": "13:40",
+                        "type": "MIS",
+                        "duration": 10,
+                        "committedByPlayer": {
+                            "firstName": {
+                                "default": "Nick"
+                            },
+                            "lastName": {
+                                "default": "Seeler"
+                            },
+                            "sweaterNumber": 24
+                        },
+                        "teamAbbrev": {
+                            "default": "PHI"
+                        },
+                        "descKey": "misconduct"
+                    },
+                    {
+                        "timeInPeriod": "15:12",
+                        "type": "MIN",
+                        "duration": 2,
+                        "committedByPlayer": {
+                            "firstName": {
+                                "default": "Andrei",
+                                "cs": "Andrej",
+                                "sk": "Andrej"
+                            },
+                            "lastName": {
+                                "default": "Svechnikov",
+                                "cs": "Sve\u010dnikov",
+                                "fi": "Svetshnikov",
+                                "sk": "Sve\u010dnikov"
+                            },
+                            "sweaterNumber": 37
+                        },
+                        "teamAbbrev": {
+                            "default": "CAR"
+                        },
+                        "drawnBy": {
+                            "firstName": {
+                                "default": "Porter"
+                            },
+                            "lastName": {
+                                "default": "Martone"
+                            },
+                            "sweaterNumber": 94
+                        },
+                        "descKey": "cross-checking"
+                    }
+                ]
+            }
+        ]
+    },
+    "clock": {
+        "timeRemaining": "00:00",
+        "secondsRemaining": 0,
+        "running": false,
+        "inIntermission": false
+    }
+}
