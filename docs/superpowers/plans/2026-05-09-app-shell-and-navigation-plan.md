@@ -45,7 +45,7 @@ The skeleton: header, breakpoint nav, and the three top-level pages (Scoreboard 
 
 - [x] **1.1 Delete the create-next-app boilerplate.** Done. `src/app/page.tsx` is now a one-liner "Loading scoreboard…" placeholder until 1.6 lands the real Scoreboard. Also took the opportunity (per the 0.2 working note) to drop the now-unused `--background`/`--foreground` aliases and the matching `@theme inline { --color-background, --color-foreground }` keys — the body uses `--bg`/`--text` directly. `@theme inline` keeps only the font keys. Build clean.
 
-- [ ] **1.2 `WatchingProvider` in `src/lib/watching/provider.tsx`.** React Context: `Watching | null`, `setWatching(snapshot)`, `clearWatching()`. Hook `useWatching()` returns `{ watching, setWatching, clearWatching }`. Throws if used outside the provider. No `useGame` subscription here — that's the pill's job. Test (`provider.test.tsx`) covers set/clear/reset.
+- [x] **1.2 `WatchingProvider` in `src/lib/watching/provider.tsx`.** Done. Context value `{ watching, setWatching, clearWatching }`; `WatchingSnapshot` type exported alongside (uses `KnownGameState | string` for the state field — narrow when known, permissive for forward compat). `useWatching()` throws with a clear message when called outside the provider. `useCallback`/`useMemo` keep value identity stable so consumers don't re-render on unrelated state changes. Public surface re-exported from `src/lib/watching/index.ts`. 5 tests cover the full lifecycle: initial null, set, clear, multi-consumer sync, and the "throws outside provider" guard.
 
 - [ ] **1.3 Mount `WatchingProvider` in `src/app/layout.tsx`.** Wraps `{children}` inside the existing `<NhlQueryProvider>`. Safe — pure client-side state.
 
