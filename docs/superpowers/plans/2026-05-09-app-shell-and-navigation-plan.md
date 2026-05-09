@@ -25,7 +25,7 @@ Everything every later phase depends on: image hosts, design tokens, the team-co
 
 - [x] **0.5 `<Skeleton>` in `src/components/skeleton.tsx`.** Done. Four variants — `card` (h-28 rounded), `row` (h-8 rounded), `rink` (aspect-100/85), `pill` (inline-block h-5 w-24 rounded-full). Optional `count` repeats with `flex flex-col gap-2`. Optional `className` for layout overrides. `aria-hidden` on every block so screen readers skip the visual placeholder. No tests yet — pure-presentational, will be exercised by the integration tests in 1.10.
 
-- [ ] **0.6 `<TeamLogo>` in `src/components/team-logo.tsx`.** Wraps `next/image`. Props: `code: TeamCode`, `size?: number` (default 32). Source URL uses the NHL CDN convention surfaced in 0.1; `alt` is the team code. Renders a colored square fallback (`bg-[primary]`) until the image loads.
+- [x] **0.6 `<TeamLogo>` in `src/components/team-logo.tsx`.** Done. URL convention: `https://assets.nhle.com/logos/nhl/svg/{code}_dark.svg` (the `_dark` SVG variant works on both light and dark UI backgrounds — outlines stay opaque). Wraps `next/image` with `unoptimized` because SVG optimization is a no-op (it's already vector); this also bypasses the `/_next/image` proxy entirely, so SVG logos don't actually rely on the `dangerouslyAllowSVG` flag from 0.1 — that flag only matters as a defense-in-depth for any future code that forgets to set `unoptimized`. Container is an inline-flex span with `background: primary` from `getTeamColors`, sized via the `size` prop (default 32) — this also doubles as the loading-state placeholder. `alt` is the team code.
 
 - [ ] **0.7 `<TeamChip>` in `src/components/team-chip.tsx`.** `<TeamLogo>` + abbreviation + optional record (`12-4-1`). Used in scoreboard cards, plays, boxscore rows.
 
