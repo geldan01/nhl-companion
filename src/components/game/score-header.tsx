@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { GameStatePill } from "@/components/game-state-pill";
 import { TeamLogo } from "@/components/team-logo";
@@ -81,10 +82,17 @@ function TeamColumn({
         align === "end" ? "flex-row-reverse text-right" : ""
       }`}
     >
-      <TeamLogo code={code} size={48} />
+      <Link href={`/team/${code}`} aria-label={`${city} ${name}`} className="shrink-0">
+        <TeamLogo code={code} size={48} />
+      </Link>
       <div className="flex min-w-0 flex-col">
         <span className="text-xs text-(--text-muted) truncate">{city}</span>
-        <span className="font-semibold tracking-tight truncate">{name}</span>
+        <Link
+          href={`/team/${code}`}
+          className="font-semibold tracking-tight truncate hover:underline"
+        >
+          {name}
+        </Link>
       </div>
       <span className="ml-auto text-3xl font-bold tabular-nums">
         {typeof score === "number" ? score : "-"}

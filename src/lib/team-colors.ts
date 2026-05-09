@@ -55,3 +55,47 @@ export const FALLBACK_TEAM_COLORS: TeamColors = {
 export function getTeamColors(code: string): TeamColors {
   return (TEAM_COLORS as Record<string, TeamColors>)[code] ?? FALLBACK_TEAM_COLORS;
 }
+
+// Full-name → abbreviation map. Used to derive a `/team/[code]` link from
+// data that only carries the full name (e.g. the team-stats response).
+// Coverage matches TEAM_COLORS — same 32 franchises.
+export const TEAM_NAME_TO_CODE: Record<string, TeamCode> = {
+  "Anaheim Ducks": "ANA",
+  "Boston Bruins": "BOS",
+  "Buffalo Sabres": "BUF",
+  "Carolina Hurricanes": "CAR",
+  "Columbus Blue Jackets": "CBJ",
+  "Calgary Flames": "CGY",
+  "Chicago Blackhawks": "CHI",
+  "Colorado Avalanche": "COL",
+  "Dallas Stars": "DAL",
+  "Detroit Red Wings": "DET",
+  "Edmonton Oilers": "EDM",
+  "Florida Panthers": "FLA",
+  "Los Angeles Kings": "LAK",
+  "Minnesota Wild": "MIN",
+  "Montréal Canadiens": "MTL",
+  "Montreal Canadiens": "MTL",
+  "New Jersey Devils": "NJD",
+  "Nashville Predators": "NSH",
+  "New York Islanders": "NYI",
+  "New York Rangers": "NYR",
+  "Ottawa Senators": "OTT",
+  "Philadelphia Flyers": "PHI",
+  "Pittsburgh Penguins": "PIT",
+  "Seattle Kraken": "SEA",
+  "San Jose Sharks": "SJS",
+  "St. Louis Blues": "STL",
+  "Tampa Bay Lightning": "TBL",
+  "Toronto Maple Leafs": "TOR",
+  "Utah Mammoth": "UTA",
+  "Utah Hockey Club": "UTA",
+  "Vancouver Canucks": "VAN",
+  "Vegas Golden Knights": "VGK",
+  "Winnipeg Jets": "WPG",
+  "Washington Capitals": "WSH",
+};
+
+export function teamCodeForName(name: string): TeamCode | null {
+  return TEAM_NAME_TO_CODE[name] ?? null;
+}

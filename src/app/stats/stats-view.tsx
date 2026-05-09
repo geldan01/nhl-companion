@@ -15,6 +15,7 @@ import {
   useSkaterStats,
   useTeamStats,
 } from "@/lib/nhl/stats";
+import { teamCodeForName } from "@/lib/team-colors";
 import { formatStatsKind, parseStatsKind } from "@/lib/url";
 
 const LIMIT = 50;
@@ -276,12 +277,23 @@ function GoalieRow({ rank, row }: { rank: number; row: GoalieStat }) {
 }
 
 function TeamRow({ rank, row }: { rank: number; row: TeamStat }) {
-  // Team-stats response gives teamFullName but not abbreviation. Linking by
-  // code requires a name→code map we haven't built yet — defer to Phase 3.
+  // Team-stats response carries teamFullName but no abbreviation; map back
+  // to a code via the team-colors module for the /team/[code] link. Falls
+  // back to plain text on the rare unmapped name (e.g. expansion / rebrand
+  // before TEAM_NAME_TO_CODE catches up).
+  const code = teamCodeForName(row.teamFullName);
+  const nameCell = code ? (
+    <Link href={`/team/${code}`} className="inline-flex items-center gap-2 hover:underline">
+      <TeamLogo code={code} size={20} />
+      <span className="font-medium">{row.teamFullName}</span>
+    </Link>
+  ) : (
+    <span className="font-medium">{row.teamFullName}</span>
+  );
   return (
     <tr className="border-b border-(--border) last:border-0 hover:bg-(--surface-hover)">
       <td className="px-2 py-2 tabular-nums text-(--text-muted)">{rank}</td>
-      <td className="px-2 py-2 font-medium">{row.teamFullName}</td>
+      <td className="px-2 py-2">{nameCell}</td>
       <td className="px-2 py-2 text-right tabular-nums">{row.gamesPlayed}</td>
       <td className="px-2 py-2 text-right tabular-nums">{row.wins}</td>
       <td className="hidden px-2 py-2 text-right tabular-nums md:table-cell">{row.losses}</td>

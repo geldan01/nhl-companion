@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 import standingsFixture from "./nhl/standings/__fixtures__/standings.json";
-import { FALLBACK_TEAM_COLORS, getTeamColors, TEAM_COLORS } from "./team-colors";
+import teamStatsFixture from "./nhl/stats/__fixtures__/team.json";
+import {
+  FALLBACK_TEAM_COLORS,
+  getTeamColors,
+  TEAM_COLORS,
+  teamCodeForName,
+} from "./team-colors";
 
 const HEX_COLOR = /^#[0-9A-Fa-f]{6}$/;
 
@@ -31,5 +37,24 @@ describe("getTeamColors", () => {
 
   it("returns the fallback for an unknown code", () => {
     expect(getTeamColors("ZZZ")).toBe(FALLBACK_TEAM_COLORS);
+  });
+});
+
+describe("teamCodeForName", () => {
+  it("maps every teamFullName from the team-stats fixture to a code", () => {
+    const names = (teamStatsFixture.data as { teamFullName: string }[]).map(
+      (t) => t.teamFullName,
+    );
+    for (const name of names) {
+      expect(teamCodeForName(name), `missing in TEAM_NAME_TO_CODE: ${name}`).not.toBeNull();
+    }
+  });
+
+  it("returns null for an unknown name", () => {
+    expect(teamCodeForName("Mystery FC")).toBeNull();
+  });
+
+  it("returns the right code for a sample lookup", () => {
+    expect(teamCodeForName("Toronto Maple Leafs")).toBe("TOR");
   });
 });

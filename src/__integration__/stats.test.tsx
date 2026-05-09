@@ -44,17 +44,17 @@ describe("Stats", () => {
     });
   });
 
-  it("switches to the team table when ?kind=team", async () => {
+  it("switches to the team table when ?kind=team and links each row to /team/[code]", async () => {
     mockSearch = new URLSearchParams("kind=team");
     renderWithProviders(<StatsView />);
     await waitFor(() => {
       expect(screen.getByRole("columnheader", { name: /pts/i })).toBeInTheDocument();
-      // Team rows are not links yet (Phase 1.8 deviation).
-      const teamLinks = screen
-        .queryAllByRole("link")
-        .filter((a) => a.getAttribute("href")?.startsWith("/team/"));
-      expect(teamLinks).toHaveLength(0);
     });
+    // Team rows are linked via teamCodeForName since 3.4.
+    const teamLinks = screen
+      .getAllByRole("link")
+      .filter((a) => a.getAttribute("href")?.startsWith("/team/"));
+    expect(teamLinks.length).toBeGreaterThan(0);
   });
 
   it("clicking the Goalies tab calls router.replace with ?kind=goalie", async () => {
