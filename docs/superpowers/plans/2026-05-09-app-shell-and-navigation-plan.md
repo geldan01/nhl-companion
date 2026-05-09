@@ -141,7 +141,7 @@ Fills out the contextual deep-link routes and adds historical scoreboard navigat
   - The third spec'd test (scoreboard hook switching between `useSchedule(date)` and `useScheduleNow`) was already covered by the 3.3 scoreboard tests, and is moot anyway because 3.3 dropped `useScheduleNow` in favor of a single `useSchedule(date)` hook.
   - Total: **115 tests** green (added 3 team + 3 player + 3 scoreboard from 3.3).
 
-- [ ] **3.6 Commit Phase 3.** All tests green. Commit message: `feat(ui): team + player routes + scoreboard date picker`.
+- [x] **3.6 Commit Phase 3.** Done as a stack of per-step commits (`d40e846`, `04be314`, `5d96c58`, `c9b8c94`, `4bfeb7f`) plus this close-out tick. Final greens: lint clean, 115 unit/integration tests green (12 added this phase), `npm run build` clean with two new dynamic routes (`ƒ /team/[code]`, `ƒ /player/[id]`). E2E not re-run because the user has a dev server holding Next's project lock — the existing Playwright specs from 2.12 don't reach team/player pages so they should still pass. Re-verify on next clean run.
 
 ---
 
