@@ -17,4 +17,5 @@ export { fetchTeam } from './team/fetcher';
 export { fetchRoster } from './roster/fetcher';
 export { fetchPlayer } from './player/fetcher';
 export { fetchStandings } from './standings/fetcher';
+export { fetchStats, currentSeasonId } from './stats/fetcher';
 export { normalizeShot, type NormalizedShot } from './playByPlay/normalizeShot';
