@@ -1,6 +1,7 @@
 "use client";
 
 import { DataState } from "@/components/data-state";
+import { GameBody } from "@/components/game/game-body";
 import { ScoreHeader } from "@/components/game/score-header";
 import { Skeleton } from "@/components/skeleton";
 import { useGame } from "@/lib/nhl/game";
@@ -27,14 +28,20 @@ export function GameDetail({ id }: { id: number }) {
       {game.data ? (
         <>
           <ScoreHeader game={game.data} />
-          <div className="mx-auto w-full max-w-6xl px-4 py-6">
-            <p className="text-sm text-(--text-muted)">
-              Plays / Box / Rink panes land in 2.5–2.7.
-            </p>
-          </div>
+          <GameBody
+            plays={<PanePlaceholder>Plays pane lands in 2.6.</PanePlaceholder>}
+            box={<PanePlaceholder>Box pane lands in 2.7.</PanePlaceholder>}
+            rink={<PanePlaceholder>Shot map lands in Phase 4.</PanePlaceholder>}
+          />
         </>
       ) : null}
     </DataState>
+  );
+}
+
+function PanePlaceholder({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="p-4 text-sm text-(--text-muted)">{children}</div>
   );
 }
 
