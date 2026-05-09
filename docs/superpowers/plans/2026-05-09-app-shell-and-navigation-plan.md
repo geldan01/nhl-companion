@@ -33,9 +33,9 @@ Everything every later phase depends on: image hosts, design tokens, the team-co
 
 - [x] **0.9 `<GameStatePill>` in `src/components/game-state-pill.tsx` + test.** Done. Props as specced. Pure formatting helper `pillText()` exported alongside the component for direct testability (no need to query rendered DOM for string assertions). LIVE/CRIT → `LIVE NP MM:SS`; FINAL/OFF → `FINAL`; PRE/FUT → locale-formatted time from `startTimeUTC` or "SCHEDULED" if missing; unknown states fall through to the raw value. Period beyond 3 → `OT`, `2OT`, `3OT`, etc. Live color = `var(--live)`, everything else = `var(--text-muted)`. 10 tests cover each state, OT periods, missing fields, and the color-class mapping. Type `KnownGameState` exported for callers that want narrowed input.
 
-- [ ] **0.10 Update `src/lib/nhl/index.ts` if needed.** No new exports expected — all components consume hooks from `src/lib/nhl/<resource>/`. Confirm and skip if untouched.
+- [x] **0.10 Update `src/lib/nhl/index.ts` if needed.** Confirmed no-op. Components import `NhlApiError` via the existing `import type { NhlApiError } from "@/lib/nhl"` re-export; nothing else from this phase belongs in the data-layer surface.
 
-- [ ] **0.11 Commit Phase 0.** `npm run lint`, `npm run test:run`, `npm run build` all green. Commit message: `feat(ui): foundation — image hosts, design tokens, shared components`.
+- [x] **0.11 Commit Phase 0.** Done as a stack of per-step commits (commits `d8ff9d1`, `63f0700`, `a563af4`, `607f707`, `31d697c`, `0361fac`, `2ac70b6`, `ddcff38`) rather than one phase-closing commit, because each step landed cleanly and the per-step commit messages already document what changed. Final greens: lint clean, 72 tests green (10 added in 0.4 + 4 in 0.3 + 9 in 0.9), `npm run build` green with no new routes (none added in this phase).
 
 ---
 
