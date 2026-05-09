@@ -20,6 +20,7 @@ export function ScoreHeader({ game }: { game: GameResponse }) {
 
   return (
     <header
+      role="banner"
       className="sticky top-12 z-20 border-b border-(--border) bg-(--surface) px-4 py-4"
       aria-label="Game header"
     >
