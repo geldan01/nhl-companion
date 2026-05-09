@@ -33,7 +33,7 @@ Vitest is wired up with jsdom + React Testing Library; config in `vitest.config.
 
 The data layer is designed in [docs/superpowers/specs/2026-05-09-nhl-data-layer-design.md](docs/superpowers/specs/2026-05-09-nhl-data-layer-design.md) and implemented under `src/lib/nhl/`. Key conventions:
 
-- **NHL API access:** Route Handlers in `src/app/api/nhl/**/route.ts` proxy NHL endpoints; the actual logic lives in `src/lib/nhl/<resource>/` (one folder per endpoint, five files: `schema.ts`, `fetcher.ts`, `route.ts`, `use<Thing>.ts`, `index.ts`). UI components import only from `src/lib/nhl/<resource>/index.ts`.
+- **NHL API access:** Route Handlers in `src/app/api/nhl/**/route.ts` proxy NHL endpoints; the actual logic lives in `src/lib/nhl/<resource>/` (one folder per endpoint, five files: `schema.ts`, `fetcher.ts`, `route.ts`, `use<Thing>.ts`, `index.ts`). UI components import only from `src/lib/nhl/<resource>/index.ts`. The `stats` module bends this pattern (one fetcher + one route, three schemas + three hooks) — see the spec.
 - **Live game data:** client polling via React Query. Hooks read `gameState` and switch off polling when a game is `FINAL`/`OFF`/`PRE`. Per-endpoint TTLs live in `src/lib/nhl/cache.ts`.
 - **Validation:** every NHL response is parsed by a Zod schema at the Route Handler boundary. Schema mismatch surfaces as a typed `NhlApiError` (kind `'schema'`), not a UI bug.
 - **Images:** use `next/image` for player headshots and team logos. Any external image host (NHL CDN domains) must be allow-listed under `images.remotePatterns` in `next.config.ts`.

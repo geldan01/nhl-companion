@@ -1,7 +1,7 @@
 # NHL Data Layer — Implementation Plan
 
 **Spec:** [`docs/superpowers/specs/2026-05-09-nhl-data-layer-design.md`](../specs/2026-05-09-nhl-data-layer-design.md)
-**Status:** Phase 5 complete 2026-05-09
+**Status:** Complete 2026-05-09
 
 Phases run top-to-bottom. Each step lists files touched, acceptance criteria, and any verification commands. Tick the checkbox when the step is done **and** its acceptance criteria pass.
 
@@ -103,14 +103,11 @@ The only module that bends the five-file pattern. One fetcher + one route handle
 
 Stuff that's easy to forget but matters.
 
-- [ ] **6.1 `README.md` update.** Section on "Working with NHL data" — link the spec, document the five-file module pattern, document the fixture-recording script.
-- [ ] **6.2 `CLAUDE.md` update.** Replace the "no test framework wired up" note (already done in Phase 0) and the "decide between client polling vs streaming" note with concrete pointers to the implemented layer + spec doc.
-- [ ] **6.3 `next.config.ts` review.** Confirm no NHL CDN allow-listing is needed for this layer (no images yet). Note the deferral in the spec's "Out of scope" still holds.
-- [ ] **6.4 End-to-end manual smoke.**
-  - Add a throwaway `src/app/_smoke/page.tsx` that calls `useSchedule(today)` and `useGame(<some live game id>)`, just renders raw JSON.
-  - Visit it, watch React Query devtools confirm polling cadence flips correctly when a game ends. Then **delete the page** before commit.
-  - Acceptance: manual confirmation only; no artifact lands in the repo.
-- [ ] **6.5 Final CI check.** `npm run lint && npm run build && npm test -- --run` all green. Tag commit "feat(nhl): data layer complete".
+- [x] **6.1 `README.md` update.** Done. Quick-reference snippet, full endpoint table, module-pattern walkthrough, "adding a new endpoint" recipe, fixture-recording instructions, error model.
+- [x] **6.2 `CLAUDE.md` update.** Already done in Phase 0; added a one-line note about the `stats` deviation now that it's implemented.
+- [x] **6.3 `next.config.ts` review.** Untouched as expected — no images rendered yet, no `images.remotePatterns` needed. Spec "out of scope" deferral still holds; image host allow-listing lands with the first feature that renders headshots/logos.
+- [x] **6.4 End-to-end manual smoke.** Compile-level check only: throwaway `/smoke` page imported `useSchedule`, `useGame`, `useStandings`, `useSkaterStats`, built and rendered HTTP 200 with all four queries in `pending` (correct — RQ is client-only and SSR can't fetch). Page deleted before commit. **Could not visually verify the polling cadence flip in React Query devtools** — that needs a browser session; revisit during the first UI feature build. Discovery during this step: Next 16 excludes underscore-prefixed folders (`_smoke/`) from routing, so the throwaway page must use a non-underscored name.
+- [x] **6.5 Final CI check.** `npm run lint`, `npm run test:run` (15 files, 49 tests), `npm run build` (10 dynamic API routes registered, type check clean) all green. Closing commit captures Phase 6 docs + final tick.
 
 ---
 
@@ -146,3 +143,5 @@ Use this section as a scratchpad while implementing — surprises, decisions, th
 - **2026-05-09 — Phase 5.** Stats endpoints (`api.nhle.com/stats/rest/en/...`) 500 without `cayenneExp` — they're not browseable. Always set `seasonId` + `gameTypeId`.
 - **2026-05-09 — Phase 5.** Sort param: `sort=points` is ascending. To get descending you must JSON-encode `[{"property":"points","direction":"DESC"}]`. Hooks default to descending; route handler forwards whatever the client sends.
 - **2026-05-09 — Phase 5.** TS conditional-type cast in stats fetcher needed `as unknown as z.ZodType<StatsResponseFor<K>>` — the schema map's union type doesn't narrow against the generic `K`. Same `as unknown as` pattern as Phase 0.
+- **2026-05-09 — Phase 6.** Next 16 treats folders prefixed with `_` as private (excluded from routing). A throwaway `_smoke/` page won't be reachable; use a regular folder name and remember to delete it.
+- **2026-05-09 — Phase 6.** Visual verification of the React Query devtools polling cadence flip is the one item the autonomous workflow can't do — flagged for the first real UI build to revisit. The pure-function tests (`cadence.test.ts`) cover the rule itself; the only thing untested is the integration with React Query's `refetchInterval` callback, which is library behavior.
