@@ -22,10 +22,10 @@ export function GameStatePill({
 }: GameStatePillProps) {
   const text = pillText({ state, period, clock, startTimeUTC });
   const isLive = state === "LIVE" || state === "CRIT";
-  const color = isLive ? "text-[var(--live)]" : "text-[var(--text-muted)]";
+  const color = isLive ? "text-(--live)" : "text-(--text-muted)";
   return (
     <span
-      className={`inline-flex items-center rounded-full border border-[var(--border)] bg-[var(--surface)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${color} ${className ?? ""}`}
+      className={`inline-flex items-center rounded-full border border-(--border) bg-(--surface) px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${color} ${className ?? ""}`}
     >
       {text}
     </span>

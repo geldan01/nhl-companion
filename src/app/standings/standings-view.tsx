@@ -53,7 +53,7 @@ function SegmentedControl({
   onChange: (next: View) => void;
 }) {
   return (
-    <div className="inline-flex rounded-full border border-[var(--border)] bg-[var(--surface)] p-0.5 text-xs">
+    <div className="inline-flex rounded-full border border-(--border) bg-(--surface) p-0.5 text-xs">
       {(["division", "wildcard"] as const).map((key) => (
         <button
           key={key}
@@ -61,8 +61,8 @@ function SegmentedControl({
           onClick={() => onChange(key)}
           className={`rounded-full px-3 py-1 capitalize transition-colors ${
             view === key
-              ? "bg-[var(--bg)] text-[var(--text)] shadow-sm"
-              : "text-[var(--text-muted)]"
+              ? "bg-(--bg) text-(--text) shadow-sm"
+              : "text-(--text-muted)"
           }`}
         >
           {key === "division" ? "Division" : "Wild Card"}
@@ -124,13 +124,13 @@ function StandingsCard({
   playoffLine: number;
 }) {
   return (
-    <section className="overflow-hidden rounded-lg border border-[var(--border)] bg-[var(--surface)]">
-      <h2 className="border-b border-[var(--border)] px-4 py-2 text-sm font-semibold tracking-tight">
+    <section className="overflow-hidden rounded-lg border border-(--border) bg-(--surface)">
+      <h2 className="border-b border-(--border) px-4 py-2 text-sm font-semibold tracking-tight">
         {title}
       </h2>
       <table className="w-full text-sm">
-        <thead className="text-xs text-[var(--text-muted)]">
-          <tr className="border-b border-[var(--border)]">
+        <thead className="text-xs text-(--text-muted)">
+          <tr className="border-b border-(--border)">
             <th scope="col" className="w-8 px-2 py-2 text-left">#</th>
             <th scope="col" className="px-2 py-2 text-left">Team</th>
             <th scope="col" className="px-2 py-2 text-right">GP</th>
@@ -145,13 +145,13 @@ function StandingsCard({
           {rows.map((entry, i) => (
             <tr
               key={entry.teamAbbrev.default}
-              className={`hover:bg-[var(--surface-hover)] ${
+              className={`hover:bg-(--surface-hover) ${
                 i + 1 === playoffLine
-                  ? "border-b-2 border-[var(--accent)]/40"
-                  : "border-b border-[var(--border)]"
+                  ? "border-b-2 border-(--accent)/40"
+                  : "border-b border-(--border)"
               }`}
             >
-              <td className="px-2 py-2 tabular-nums text-[var(--text-muted)]">{i + 1}</td>
+              <td className="px-2 py-2 tabular-nums text-(--text-muted)">{i + 1}</td>
               <td className="px-2 py-2">
                 <Link
                   href={`/team/${entry.teamAbbrev.default}`}
@@ -159,7 +159,7 @@ function StandingsCard({
                 >
                   <TeamLogo code={entry.teamAbbrev.default} size={20} />
                   <span className="font-medium">{entry.teamAbbrev.default}</span>
-                  <span className="text-[var(--text-muted)]">{entry.teamCommonName.default}</span>
+                  <span className="text-(--text-muted)">{entry.teamCommonName.default}</span>
                 </Link>
               </td>
               <td className="px-2 py-2 text-right tabular-nums">{entry.gamesPlayed}</td>

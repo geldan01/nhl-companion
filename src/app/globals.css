@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 /* Design tokens.
-   Reference via Tailwind arbitrary values, e.g. `bg-[var(--surface)]`.
+   Reference via Tailwind v4 CSS-variable shorthand, e.g. `bg-(--surface)`.
    Light values live under :root; dark values flip via prefers-color-scheme. */
 :root {
   --bg: #ffffff;

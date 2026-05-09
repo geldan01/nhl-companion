@@ -58,7 +58,7 @@ function DefaultEmptyState({ status }: { status: number }) {
   return (
     <div
       role="status"
-      className="px-4 py-12 text-center text-sm text-[var(--text-muted)]"
+      className="px-4 py-12 text-center text-sm text-(--text-muted)"
     >
       {status === 404 ? "Not found." : `Unavailable (${status}).`}
     </div>
@@ -69,7 +69,7 @@ function HardErrorBanner({ error }: { error: NhlApiError }) {
   return (
     <div
       role="alert"
-      className="border-b border-[var(--border)] bg-[var(--surface)] px-4 py-2 text-sm text-[var(--text-muted)]"
+      className="border-b border-(--border) bg-(--surface) px-4 py-2 text-sm text-(--text-muted)"
     >
       Data unavailable. Showing last-known values.
       <span className="sr-only">{error.message}</span>
@@ -81,7 +81,7 @@ function DelayedBadge() {
   return (
     <span
       role="status"
-      className="absolute right-2 top-2 z-10 rounded-full border border-[var(--border)] bg-[var(--surface)] px-2 py-0.5 text-[10px] uppercase tracking-wide text-[var(--text-muted)]"
+      className="absolute right-2 top-2 z-10 rounded-full border border-(--border) bg-(--surface) px-2 py-0.5 text-[10px] uppercase tracking-wide text-(--text-muted)"
     >
       Delayed
     </span>

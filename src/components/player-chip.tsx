@@ -16,7 +16,7 @@ export function PlayerChip({ name, headshotUrl, size = 24, className }: PlayerCh
   return (
     <span className={`inline-flex items-center gap-2 ${className ?? ""}`}>
       <span
-        className="inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-[var(--surface)] text-[10px] font-semibold uppercase text-[var(--text-muted)]"
+        className="inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-(--surface) text-[10px] font-semibold uppercase text-(--text-muted)"
         style={{ width: size, height: size }}
       >
         {headshotUrl ? (

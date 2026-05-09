@@ -13,7 +13,7 @@ export default function StatsPage() {
 function StatsFallback() {
   return (
     <div className="mx-auto w-full max-w-5xl px-4 py-6">
-      <div className="mb-6 h-7 w-32 animate-pulse rounded bg-[var(--surface)]" />
+      <div className="mb-6 h-7 w-32 animate-pulse rounded bg-(--surface)" />
       <Skeleton variant="row" count={10} />
     </div>
   );

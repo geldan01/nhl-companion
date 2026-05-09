@@ -35,7 +35,7 @@ export function AppShell({ children }: { children: ReactNode }) {
 
 function Header() {
   return (
-    <header className="sticky top-0 z-30 flex h-12 shrink-0 items-center gap-3 border-b border-[var(--border)] bg-[var(--bg)]/80 px-4 backdrop-blur">
+    <header className="sticky top-0 z-30 flex h-12 shrink-0 items-center gap-3 border-b border-(--border) bg-(--bg)/80 px-4 backdrop-blur">
       <Link href="/" className="font-semibold tracking-tight">
         NHL Companion
       </Link>
@@ -48,8 +48,8 @@ function Header() {
 
 function Sidebar({ pathname }: { pathname: string }) {
   return (
-    <aside className="hidden w-56 shrink-0 border-r border-[var(--border)] bg-[var(--bg)] lg:flex lg:flex-col">
-      <div className="flex h-12 items-center border-b border-[var(--border)] px-4 font-semibold tracking-tight">
+    <aside className="hidden w-56 shrink-0 border-r border-(--border) bg-(--bg) lg:flex lg:flex-col">
+      <div className="flex h-12 items-center border-b border-(--border) px-4 font-semibold tracking-tight">
         Menu
       </div>
       <nav className="flex flex-col gap-1 p-3">
@@ -59,8 +59,8 @@ function Sidebar({ pathname }: { pathname: string }) {
             href={item.href}
             className={`rounded px-3 py-2 text-sm transition-colors ${
               isActive(pathname, item.href)
-                ? "bg-[var(--surface)] text-[var(--text)]"
-                : "text-[var(--text-muted)] hover:bg-[var(--surface-hover)]"
+                ? "bg-(--surface) text-(--text)"
+                : "text-(--text-muted) hover:bg-(--surface-hover)"
             }`}
           >
             {item.label}
@@ -74,7 +74,7 @@ function Sidebar({ pathname }: { pathname: string }) {
 function BottomNav({ pathname }: { pathname: string }) {
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-30 flex h-14 items-stretch border-t border-[var(--border)] bg-[var(--bg)] pb-[env(safe-area-inset-bottom)] lg:hidden"
+      className="fixed bottom-0 left-0 right-0 z-30 flex h-14 items-stretch border-t border-(--border) bg-(--bg) pb-[env(safe-area-inset-bottom)] lg:hidden"
       aria-label="Primary"
     >
       {NAV_ITEMS.map((item) => {
@@ -85,8 +85,8 @@ function BottomNav({ pathname }: { pathname: string }) {
             href={item.href}
             className={`flex flex-1 flex-col items-center justify-center text-xs ${
               active
-                ? "text-[var(--text)] font-semibold"
-                : "text-[var(--text-muted)]"
+                ? "text-(--text) font-semibold"
+                : "text-(--text-muted)"
             }`}
           >
             {item.label}

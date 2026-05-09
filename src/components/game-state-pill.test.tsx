@@ -46,12 +46,12 @@ describe("<GameStatePill />", () => {
   it("uses the live color class for LIVE state", () => {
     render(<GameStatePill state="LIVE" period={1} clock="5:00" />);
     const pill = screen.getByText(/LIVE 1P 5:00/);
-    expect(pill.className).toMatch(/var\(--live\)/);
+    expect(pill.className).toMatch(/text-\(--live\)/);
   });
 
   it("uses the muted color class for FINAL state", () => {
     render(<GameStatePill state="FINAL" />);
     const pill = screen.getByText("FINAL");
-    expect(pill.className).toMatch(/var\(--text-muted\)/);
+    expect(pill.className).toMatch(/text-\(--text-muted\)/);
   });
 });

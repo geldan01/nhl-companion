@@ -14,11 +14,11 @@ export function NowWatchingPill() {
   return (
     <Link
       href={`/game/${watching.gameId}`}
-      className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--surface)] px-3 py-1 text-xs hover:bg-[var(--surface-hover)]"
+      className="inline-flex items-center gap-2 rounded-full border border-(--border) bg-(--surface) px-3 py-1 text-xs hover:bg-(--surface-hover)"
     >
       <span className="font-semibold">{watching.away}</span>
       <span className="tabular-nums">{watching.awayScore}</span>
-      <span className="text-[var(--text-muted)]">–</span>
+      <span className="text-(--text-muted)">–</span>
       <span className="tabular-nums">{watching.homeScore}</span>
       <span className="font-semibold">{watching.home}</span>
       <GameStatePill state={watching.state} />

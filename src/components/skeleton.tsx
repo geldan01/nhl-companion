@@ -6,7 +6,7 @@ export type SkeletonProps = {
   className?: string;
 };
 
-const SHIMMER = "animate-pulse bg-[var(--surface)]";
+const SHIMMER = "animate-pulse bg-(--surface)";
 
 export function Skeleton({ variant, count = 1, className }: SkeletonProps) {
   const block = <SkeletonBlock variant={variant} className={className} />;

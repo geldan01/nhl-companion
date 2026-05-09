@@ -13,7 +13,7 @@ export default function StandingsPage() {
 function StandingsFallback() {
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-6">
-      <div className="mb-6 h-7 w-32 animate-pulse rounded bg-[var(--surface)]" />
+      <div className="mb-6 h-7 w-32 animate-pulse rounded bg-(--surface)" />
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         <Skeleton variant="card" count={4} />
       </div>

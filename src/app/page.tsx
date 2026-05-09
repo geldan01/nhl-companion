@@ -26,7 +26,7 @@ export default function HomePage() {
         skeleton={<ScoreboardSkeleton />}
       >
         {games.length === 0 ? (
-          <p className="px-4 py-12 text-center text-sm text-[var(--text-muted)]">
+          <p className="px-4 py-12 text-center text-sm text-(--text-muted)">
             No games scheduled today.
           </p>
         ) : (
@@ -47,7 +47,7 @@ function Groups({ games }: { games: ScheduleGame[] }) {
         if (inGroup.length === 0) return null;
         return (
           <section key={group.id}>
-            <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">
+            <h2 className="mb-3 text-xs font-semibold uppercase tracking-wide text-(--text-muted)">
               {group.label}
             </h2>
             <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">

@@ -13,7 +13,7 @@ export function GameCard({ game, className }: GameCardProps) {
   return (
     <Link
       href={`/game/${game.id}`}
-      className={`flex flex-col gap-3 rounded-lg border border-[var(--border)] bg-[var(--surface)] p-4 transition-colors hover:bg-[var(--surface-hover)] ${className ?? ""}`}
+      className={`flex flex-col gap-3 rounded-lg border border-(--border) bg-(--surface) p-4 transition-colors hover:bg-(--surface-hover) ${className ?? ""}`}
     >
       <div className="flex items-center justify-between">
         <TeamRow code={away.abbrev} score={away.score} />
@@ -63,5 +63,5 @@ function TeamRow({
 }
 
 function ScoreSep() {
-  return <span className="px-2 text-sm text-[var(--text-muted)]">@</span>;
+  return <span className="px-2 text-sm text-(--text-muted)">@</span>;
 }

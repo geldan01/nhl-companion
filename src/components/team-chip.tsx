@@ -14,7 +14,7 @@ export function TeamChip({ code, record, size = 24, className }: TeamChipProps) 
       <TeamLogo code={code} size={size} />
       <span className="font-medium">{code}</span>
       {record ? (
-        <span className="text-xs text-[var(--text-muted)]">{record}</span>
+        <span className="text-xs text-(--text-muted)">{record}</span>
       ) : null}
     </span>
   );
