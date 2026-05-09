@@ -1,7 +1,7 @@
 # NHL Data Layer — Implementation Plan
 
 **Spec:** [`docs/superpowers/specs/2026-05-09-nhl-data-layer-design.md`](../specs/2026-05-09-nhl-data-layer-design.md)
-**Status:** Phase 1 complete 2026-05-09
+**Status:** Phase 2 complete 2026-05-09
 
 Phases run top-to-bottom. Each step lists files touched, acceptance criteria, and any verification commands. Tick the checkbox when the step is done **and** its acceptance criteria pass.
 
@@ -40,27 +40,15 @@ The pieces every endpoint module reuses. Keep these tiny and well-tested — bug
 
 The module that establishes the five-file pattern. Implement it carefully because every later module copies its shape.
 
-- [ ] **2.1 Record fixture.** Write `scripts/record-fixture.ts` (one-time tool — fetches an NHL endpoint and pretty-prints to a path). Use it to capture `src/lib/nhl/schedule/__fixtures__/schedule.json` from `https://api-web.nhle.com/v1/schedule/2026-05-09` (or any valid date with games).
-  - Acceptance: fixture file exists, is valid JSON, ~kilobytes in size.
-
-- [ ] **2.2 `schedule/schema.ts`.** Zod schemas for the response. Use `.passthrough()`. Types via `z.infer`.
-  - Test `schedule/schema.test.ts`: `expect(ScheduleResponse.parse(fixture)).not.toThrow()`. 1 test.
-
-- [ ] **2.3 `schedule/fetcher.ts`.** `fetchSchedule(date)` calling `nhlFetch` with the schema and `TTL.schedule(date)`.
-
-- [ ] **2.4 `schedule/route.ts`.** Exported `GET` handler factory: parses `date` from params, calls fetcher, maps errors to HTTP status, returns `NextResponse.json`.
-
-- [ ] **2.5 `app/api/nhl/schedule/[date]/route.ts`.** One-line re-export: `export { GET } from '@/lib/nhl/schedule/route';`.
-  - Acceptance: `curl http://localhost:3000/api/nhl/schedule/2026-05-09` (with `npm run dev` running) returns valid JSON.
-
-- [ ] **2.6 `schedule/useSchedule.ts`.** RQ hook per spec; uses `usePollingInterval(POLL.schedule(date))` and `STALE.schedule(date)`.
-
-- [ ] **2.7 `schedule/index.ts`.** Re-exports `useSchedule` and `ScheduleResponse` only.
-
-- [ ] **2.8 Update top-level `lib/nhl/index.ts`.** Add `fetchSchedule` to the escape-hatch re-exports.
-
-- [ ] **2.9 Commit Phase 2.** Single commit: "feat(nhl): schedule endpoint module".
-  - Acceptance: tests + lint + build green; manual curl returns NHL data.
+- [x] **2.1 Record fixture.** `scripts/record-fixture.ts` (manual tool, takes `<url> <output-path>`); `schedule.json` recorded against 2026-05-09.
+- [x] **2.2 `schedule/schema.ts` + test.** Schemas for `ScheduleResponse`, `GameWeekDay`, `GameSummary`, `TeamSummary`, `TvBroadcast`, `PeriodDescriptor`, `LocalizedString` — all `.passthrough()`. `team.score` is optional (only present for live/final games).
+- [x] **2.3 `schedule/fetcher.ts`.** `fetchSchedule(date)` done.
+- [x] **2.4 `schedule/route.ts`.** Done. Uses Next 16's `RouteContext<'/api/nhl/schedule/[date]'>` (await ctx.params). `statusForError` helper maps `NhlApiError.kind` → HTTP status.
+- [x] **2.5 `app/api/nhl/schedule/[date]/route.ts`.** One-line re-export. Verified live: `GET /api/nhl/schedule/2026-05-09` returns parsed NHL JSON; bad date → 404 with structured error body.
+- [x] **2.6 `schedule/useSchedule.ts`.** Done. Hits our route handler, types as `useQuery<ScheduleResponse, NhlApiError>`. Server error body shape `{ error: NhlApiError }` rethrown by the client fetcher — RQ retry policy in the provider can branch on it.
+- [x] **2.7 `schedule/index.ts`.** Re-exports the hook + 3 types (`ScheduleResponse`, `ScheduleGame`, `ScheduleGameWeekDay`).
+- [x] **2.8 Update top-level `lib/nhl/index.ts`.** `fetchSchedule` added to escape-hatch re-exports.
+- [x] **2.9 Commit Phase 2.** Commit `aad01ad`. 22 tests green, lint + build clean.
 
 ---
 
@@ -153,3 +141,5 @@ Use this section as a scratchpad while implementing — surprises, decisions, th
 - **2026-05-09 — Phase 1.** jsdom pinned to `^25` — v27 hits the same Node 20.18 ESM/CJS issue as Vitest 4. Same revisit-on-Node-upgrade note.
 - **2026-05-09 — Phase 1.** `cache.ts` mixes units: TTL in seconds (Next's `next.revalidate`), STALE/POLL in milliseconds (React Query). Comment at top of file documents this.
 - **2026-05-09 — Phase 1.** "Today" is computed via UTC `YYYY-MM-DD` — server and client agree, but it'll flip a few hours off local time near midnight. Acceptable for a freshness/poll heuristic; revisit if it ever surfaces a real bug.
+- **2026-05-09 — Phase 2.** Next 16 route handler params are async — `RouteContext<'/path/[param]'>` + `await ctx.params`. Documented in `node_modules/next/dist/docs/01-app/01-getting-started/15-route-handlers.md`. Worth re-reading before adding more routes.
+- **2026-05-09 — Phase 2.** Schema is intentionally narrow: we only `require` the fields the UI plans to consume; everything else flows through unchanged via `.passthrough()`. `awayTeam.score`/`homeTeam.score` are optional because they're absent on FUT (future) games — reproduce only when both are non-FUT.
