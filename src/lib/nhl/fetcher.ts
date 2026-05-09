@@ -1,5 +1,6 @@
 import { z, ZodError } from 'zod';
 import { toNhlApiError, type NhlApiError } from './errors';
+import { isFixturesMode, tryFixtureFor } from './fixtures-mode';
 
 const DEFAULT_TIMEOUT_MS = 5000;
 const USER_AGENT = 'nhl-companion/0.1';
@@ -14,6 +15,31 @@ export type NhlFetchOpts<T> = {
 
 export async function nhlFetch<T>(opts: NhlFetchOpts<T>): Promise<T> {
   const { url, schema, revalidate, signal: externalSignal, timeoutMs = DEFAULT_TIMEOUT_MS } = opts;
+
+  if (isFixturesMode()) {
+    const fixture = tryFixtureFor(url);
+    if (fixture !== null) {
+      // Still parse — fixtures should match the schema, and a regression here
+      // is exactly what the e2e suite catches if the API shape changes.
+      try {
+        return schema.parse(fixture);
+      } catch (err) {
+        if (err instanceof ZodError) {
+          const schemaErr: NhlApiError = {
+            kind: 'schema',
+            issues: err.issues,
+            url,
+            message: `Fixture for ${url} did not match schema`,
+          };
+          throw schemaErr;
+        }
+        throw err;
+      }
+    }
+    // Fall through to a real upstream fetch when the URL has no fixture —
+    // useful for one-off probes during e2e dev. The Playwright config can
+    // also be set up to fail loudly if real network is hit.
+  }
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
