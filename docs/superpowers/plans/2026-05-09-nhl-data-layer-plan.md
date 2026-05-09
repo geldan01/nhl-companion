@@ -1,7 +1,7 @@
 # NHL Data Layer — Implementation Plan
 
 **Spec:** [`docs/superpowers/specs/2026-05-09-nhl-data-layer-design.md`](../specs/2026-05-09-nhl-data-layer-design.md)
-**Status:** Phase 0 complete 2026-05-09
+**Status:** Phase 1 complete 2026-05-09
 
 Phases run top-to-bottom. Each step lists files touched, acceptance criteria, and any verification commands. Tick the checkbox when the step is done **and** its acceptance criteria pass.
 
@@ -27,25 +27,12 @@ The pieces every endpoint module reuses. Keep these tiny and well-tested — bug
 
 - [x] **1.1 `errors.ts`.** Done in Phase 0.4 (lifted forward because the provider's retry needed it). Tagged `NhlApiError` union + `toNhlApiError(unknown, url)` + `isNhlApiError(value)` typeguard. No tests yet — covered by fetcher tests.
 
-- [ ] **1.2 `hosts.ts`.** `HOSTS = { web, stats } as const`. Trivial — no tests.
-
-- [ ] **1.3 `cache.ts`.** Three exports:
-  - `TTL` — server-side `revalidate` values keyed by resource (numbers, or `false` for `no-store`). Includes the variable cases as functions: `TTL.schedule(date)`, `TTL.game(state)`, `TTL.playByPlay(state)`, `TTL.boxscore(state)`.
-  - `STALE` — RQ `staleTime` per resource, same shape (functions where variable).
-  - `POLL` — RQ `refetchInterval` per resource, same shape. Returns `false` when polling should be off.
-  - Helper `isLiveGameState(state)` — returns `true` iff state is `LIVE` or `CRIT`. Used by the three live endpoints.
-  - Test file `cache.test.ts`: a few asserts on the live/final flip and today/other-date schedule branching. ~5 tests.
-
-- [ ] **1.4 `fetcher.ts`.** The `nhlFetch<T>(opts)` wrapper per spec (headers, timeout, cache directive, error mapping, Zod parse).
-  - Test file `fetcher.test.ts`: mock `global.fetch` with `vi.fn`. Cover happy path, http 500 → `kind: 'http'`, network throw → `kind: 'network'`, `AbortError` → `kind: 'timeout'`, schema mismatch → `kind: 'schema'`. ~5 tests.
-
-- [ ] **1.5 `visibility.ts`.** `useVisibility()` and `usePollingInterval(ms)`. Subscribes to `document.visibilitychange`. `usePollingInterval(false)` returns `false`.
-  - Test file `visibility.test.ts`: render the hook, fire `visibilitychange`, assert state. ~2 tests.
-
-- [ ] **1.6 Top-level `index.ts`.** Re-exports the public surface: `<NhlQueryProvider>`, `NhlApiError`, `usePollingInterval`. Server-side fetchers re-exported here once they exist (filled in incrementally each phase).
-
-- [ ] **1.7 Commit Phase 1.** Single commit: "feat(nhl): shared data-layer infrastructure (fetcher, errors, cache, visibility)".
-  - Acceptance: `npm test -- --run` green with ~12 tests; `npm run build` green; `npm run lint` green.
+- [x] **1.2 `hosts.ts`.** Done.
+- [x] **1.3 `cache.ts`.** Done. 8 tests covering live/final flip and today/other-date schedule branching. Helper `isTodayUtc` added (used by both schedule branches).
+- [x] **1.4 `fetcher.ts`.** Done. 8 tests (happy path, headers/cache directive, no-store, http 500/404, network, timeout, schema mismatch).
+- [x] **1.5 `visibility.ts`.** Done. 5 tests (initial visible, flip to hidden via event, ms passthrough, hidden→false, false passthrough).
+- [x] **1.6 Top-level `index.ts`.** Done. Re-exports `NhlQueryProvider`, `NhlApiError`/`isNhlApiError`, `useVisibility`/`usePollingInterval`, `HOSTS`, `TTL`/`STALE`/`POLL`/`isLiveGameState`/`isTodayUtc`, `nhlFetch`/`NhlFetchOpts`. Server fetchers will be added per phase as endpoints land.
+- [x] **1.7 Commit Phase 1.** Commit `91edae2`. 21 tests green, lint green, build green.
 
 ---
 
@@ -163,3 +150,6 @@ Use this section as a scratchpad while implementing — surprises, decisions, th
 - **2026-05-09 — Phase 0.** `vitest.config.ts` had to become `vitest.config.mts` so Vite loads it as ESM (needed for `vite-tsconfig-paths`).
 - **2026-05-09 — Phase 0.** Lifted `errors.ts` (Phase 1.1) forward into Phase 0.4 because the retry policy in `<NhlQueryProvider>` needs the `NhlApiError` type. Phase 1.1 is now a no-op.
 - **2026-05-09 — Phase 0.** Devtools toggle not visually verified (no browser session); plumbing compiles + page returns 200. Re-check next time the dev server is up.
+- **2026-05-09 — Phase 1.** jsdom pinned to `^25` — v27 hits the same Node 20.18 ESM/CJS issue as Vitest 4. Same revisit-on-Node-upgrade note.
+- **2026-05-09 — Phase 1.** `cache.ts` mixes units: TTL in seconds (Next's `next.revalidate`), STALE/POLL in milliseconds (React Query). Comment at top of file documents this.
+- **2026-05-09 — Phase 1.** "Today" is computed via UTC `YYYY-MM-DD` — server and client agree, but it'll flip a few hours off local time near midnight. Acceptable for a freshness/poll heuristic; revisit if it ever surfaces a real bug.
