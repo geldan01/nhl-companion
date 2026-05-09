@@ -56,7 +56,9 @@ const ROUTES: Route[] = [
     data: roster,
   },
   { match: (u) => /^\/api\/nhl\/team\/[A-Z]+$/.test(u.pathname), data: team },
-  { match: (u) => /^\/api\/nhl\/player\/\d+$/.test(u.pathname), data: player },
+  // Constrained to the fixture's actual player id so empty-state tests can
+  // hit a real 404 (same pattern as the game routes).
+  { match: (u) => u.pathname === "/api/nhl/player/8478402", data: player },
 ];
 
 export function installFetchMock() {

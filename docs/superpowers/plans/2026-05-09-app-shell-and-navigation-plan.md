@@ -135,7 +135,11 @@ Fills out the contextual deep-link routes and adds historical scoreboard navigat
 
 - [x] **3.4 Inbound link sweep.** Done. Confirmed (already wired in earlier phases): Scoreboard cards → `/game/[id]` (2.8), Standings rows → `/team/[code]` (1.7), Stats player rows → `/player/[id]` (1.8), Box-pane player rows → `/player/[id]` (2.7). Newly wired this step: ScoreHeader logos AND team names link to `/team/[code]` (wrapped each in `<Link>`); Stats team rows link to `/team/[code]` via the new `teamCodeForName` helper. Added `TEAM_NAME_TO_CODE` (33 entries — 32 codes plus a Montréal/Montreal alias for accent-insensitive lookups) + `teamCodeForName(name) → TeamCode | null` to `src/lib/team-colors.ts`. Tests assert (a) every `teamFullName` from the team-stats fixture maps successfully and (b) unknown names fall through to `null`. Updated the Stats integration test that previously asserted team rows were NOT links — they are now.
 
-- [ ] **3.5 Integration tests.** Team page renders header + roster sections from fixtures; placeholder text for recent results is present. Player page renders headshot + bio + career table. Scoreboard with `?date=2025-01-15` switches hooks correctly (`useSchedule(date)` is called, `useScheduleNow` is not).
+- [x] **3.5 Integration tests.** Done. Two new files:
+  - `team-page.test.tsx` (3): renders the team header (h1 present even when standings cache is empty), renders Forwards/Defense/Goalies sub-tables with player links, renders the recent-results placeholder mentioning `useTeamSchedule`.
+  - `player-page.test.tsx` (3): renders the player heading + a `/team/[code]` chip, renders the NHL regular-season table + the Career footer row, renders the empty state when the player id has no fixture (added the same constraint to `setup-fetch.ts` as for game routes — `/api/nhl/player/8478402` only).
+  - The third spec'd test (scoreboard hook switching between `useSchedule(date)` and `useScheduleNow`) was already covered by the 3.3 scoreboard tests, and is moot anyway because 3.3 dropped `useScheduleNow` in favor of a single `useSchedule(date)` hook.
+  - Total: **115 tests** green (added 3 team + 3 player + 3 scoreboard from 3.3).
 
 - [ ] **3.6 Commit Phase 3.** All tests green. Commit message: `feat(ui): team + player routes + scoreboard date picker`.
 
