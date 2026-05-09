@@ -119,7 +119,7 @@ The headline screen plus the persistent pill behavior. This is also where Playwr
     2. `page.goto("/path")` is a full document load — resets all React state including the WatchingProvider context. Use `page.click(navLink)` to keep things client-side. Documented in the spec test for future tests.
   - Console produces benign Next/image aspect-ratio warnings during the suite (TeamLogo's wrapping span sets explicit width+height but the image inside is asked to fit) — non-fatal, no fix this phase.
 
-- [ ] **2.13 Commit Phase 2.** All tests green: `npm run lint && npm run test:run && npm run build && npm run test:e2e`. Commit message: `feat(ui): game detail + Now-watching pill end-to-end + Playwright`.
+- [x] **2.13 Commit Phase 2.** Done as a stack of per-step commits (`7418910`, `147f1ef`, `90b0295`, `86aa632`, `63a98f7`, `80e9d77`, `aef571f`, `479fc8b`, `231b749`, `5edf195`, `8fd7e21`, `6080beb`) plus this close-out tick. Final greens: lint clean, 103 unit/integration tests green (6 added in 2.11), `npm run build` green with new `ƒ /game/[id]` route, `npm run test:e2e` 6/6 green.
 
 ---
 
