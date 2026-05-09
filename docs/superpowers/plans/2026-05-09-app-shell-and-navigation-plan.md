@@ -149,7 +149,7 @@ Fills out the contextual deep-link routes and adds historical scoreboard navigat
 
 Replaces the Phase 2 `<RinkPane>` placeholder with the real visualization. Introduces D3 as a runtime dep.
 
-- [ ] **4.1 Install D3.** `npm install d3 @types/d3`. (Could narrow to `d3-scale` + `d3-array` later if bundle size matters; full `d3` is ~25kb gzipped and we'll likely use more of it for future overlays.)
+- [x] **4.1 Install D3.** Done. `d3@^7.9.0` + `@types/d3@^7.4.3`. Both ended up in `dependencies` rather than splitting types into devDependencies — fine for this app since the types package is tiny and other projects in the same shape (Next + TS) typically keep them together.
 
 - [ ] **4.2 `src/components/rink/scales.ts` + test.** Exports `xScale`, `yScale` (D3 linear scales 0..1 → 0..100 / 0..85), `distanceFromGoal(x, y)` (in feet), `isShotKind(typeDescKey): boolean`, and `shotKindOf(typeDescKey): 'goal' | 'shot-on-goal' | 'missed-shot' | 'blocked-shot'`. Test: assert (0.5, 0.5) maps to (50, 42.5); assert distance from (1.0, 0.5) to the goal at (100, 42.5) is 0; assert classifier handles all NHL `typeDescKey` values that should count as shots.
 
