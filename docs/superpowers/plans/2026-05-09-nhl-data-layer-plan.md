@@ -1,7 +1,7 @@
 # NHL Data Layer — Implementation Plan
 
 **Spec:** [`docs/superpowers/specs/2026-05-09-nhl-data-layer-design.md`](../specs/2026-05-09-nhl-data-layer-design.md)
-**Status:** Not started 2026-05-09
+**Status:** Phase 0 complete 2026-05-09
 
 Phases run top-to-bottom. Each step lists files touched, acceptance criteria, and any verification commands. Tick the checkbox when the step is done **and** its acceptance criteria pass.
 
@@ -13,28 +13,11 @@ The plan is structured so an interruption between phases leaves the codebase in 
 
 Bootstrap the toolchain so every later phase has somewhere to land.
 
-- [ ] **0.1 Install runtime dependencies.**
-  - Run: `npm install zod @tanstack/react-query`
-  - Run: `npm install --save-dev @tanstack/react-query-devtools`
-  - Acceptance: `package.json` lists all three; `npm run build` still succeeds.
-
-- [ ] **0.2 Install Vitest + React Testing Library.**
-  - Run: `npm install --save-dev vitest @vitejs/plugin-react jsdom @testing-library/react @testing-library/dom`
-  - Acceptance: dependencies installed; build still succeeds.
-
-- [ ] **0.3 Configure Vitest.**
-  - Create `vitest.config.ts` at repo root with: `@vitejs/plugin-react`, `environment: 'jsdom'`, `globals: true`, `setupFiles: ['./vitest.setup.ts']`.
-  - Create `vitest.setup.ts` with `import '@testing-library/jest-dom'` (only if the matchers are wanted — otherwise leave empty file).
-  - Resolve `@/*` alias the same way `tsconfig.json` does (`vite-tsconfig-paths` is the easy path: `npm i -D vite-tsconfig-paths`, add to `plugins`).
-  - Add `"test": "vitest"` and `"test:run": "vitest run"` to `package.json` scripts.
-  - Acceptance: `npm test -- --run` exits 0 with "no test files found." Update `CLAUDE.md`'s "no test framework wired up" note in the same commit.
-
-- [ ] **0.4 Mount `<NhlQueryProvider>` placeholder.**
-  - Create `src/lib/nhl/client.tsx` exporting a `<NhlQueryProvider>` client component that wraps children in `QueryClientProvider`. Defaults per spec (retry policy, `refetchOnWindowFocus`, `refetchOnReconnect`). Mount Devtools only when `process.env.NODE_ENV === 'development'`.
-  - Edit `src/app/layout.tsx` to wrap `{children}` in `<NhlQueryProvider>`.
-  - Acceptance: `npm run build` succeeds; visiting `/` in dev shows the React Query devtools toggle.
-
-- [ ] **0.5 Commit Phase 0.** Single commit: "chore: add zod, react-query, vitest; mount QueryClientProvider".
+- [x] **0.1 Install runtime dependencies.** Done.
+- [x] **0.2 Install Vitest + React Testing Library.** Done. Also installed `@testing-library/jest-dom` and `vite-tsconfig-paths`.
+- [x] **0.3 Configure Vitest.** Done with two deviations: (a) config is `vitest.config.mts` (not `.ts`) so Vite loads it as ESM — needed because `vite-tsconfig-paths` is ESM-only and Vite's CJS loader can't require it on Node 20.18. (b) Vitest pinned to `^3` instead of `^4`; v4 requires Node ≥20.19 / 22.13 which aren't installed. Both choices are personal-project-friendly; revisit on Node upgrade. Also added `passWithNoTests: true` so an empty test run exits 0.
+- [x] **0.4 Mount `<NhlQueryProvider>`.** Done. Lifted `errors.ts` forward from Phase 1.1 because the retry policy needs the `NhlApiError` type — Phase 1 will treat 1.1 as already done.
+- [x] **0.5 Commit Phase 0.** Commit `c636731`.
 
 ---
 
@@ -42,7 +25,7 @@ Bootstrap the toolchain so every later phase has somewhere to land.
 
 The pieces every endpoint module reuses. Keep these tiny and well-tested — bugs here propagate everywhere.
 
-- [ ] **1.1 `errors.ts`.** Tagged `NhlApiError` union per spec. A `toNhlApiError(unknown)` helper that narrows arbitrary thrown values into the union (used inside `nhlFetch`'s catch). No tests yet — covered by fetcher tests.
+- [x] **1.1 `errors.ts`.** Done in Phase 0.4 (lifted forward because the provider's retry needed it). Tagged `NhlApiError` union + `toNhlApiError(unknown, url)` + `isNhlApiError(value)` typeguard. No tests yet — covered by fetcher tests.
 
 - [ ] **1.2 `hosts.ts`.** `HOSTS = { web, stats } as const`. Trivial — no tests.
 
@@ -176,4 +159,7 @@ Stuff that's easy to forget but matters.
 
 Use this section as a scratchpad while implementing — surprises, decisions, things to revisit. Keep it terse.
 
-_(empty)_
+- **2026-05-09 — Phase 0.** Vitest 4 needs Node ≥20.19; pinned to v3 since dev box is 20.18. Revisit on Node upgrade.
+- **2026-05-09 — Phase 0.** `vitest.config.ts` had to become `vitest.config.mts` so Vite loads it as ESM (needed for `vite-tsconfig-paths`).
+- **2026-05-09 — Phase 0.** Lifted `errors.ts` (Phase 1.1) forward into Phase 0.4 because the retry policy in `<NhlQueryProvider>` needs the `NhlApiError` type. Phase 1.1 is now a no-op.
+- **2026-05-09 — Phase 0.** Devtools toggle not visually verified (no browser session); plumbing compiles + page returns 200. Re-check next time the dev server is up.
