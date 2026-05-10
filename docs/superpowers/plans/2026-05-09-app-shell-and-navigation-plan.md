@@ -175,7 +175,7 @@ Replaces the Phase 2 `<RinkPane>` placeholder with the real visualization. Intro
 
 - [x] **4.10 Update README.** Done. Added a "Visualizations" section after the error-pattern notes. Covers the rink file layout (one-line each: scales / RinkBackdrop / ShotDot / RinkControls / RinkPane), the React–D3 split rule (D3 for math, React JSX for DOM), and a how-to-add-an-overlay note pointing at `d3-shape` for path generation.
 
-- [ ] **4.11 Commit Phase 4.** All tests green: `npm run lint && npm run test:run && npm run build && npm run test:e2e`. Commit message: `feat(ui): shot map (D3 scales + half-rink offensive overlay)`.
+- [x] **4.11 Commit Phase 4.** Done as a stack of per-step commits (`59c3e10`, `691cbf3`, `f18ad7e`, `30acfbe`, `4a52693`) plus this close-out tick. Final greens: lint clean, 127 unit/integration tests green (12 added this phase: 8 scales + 4 rink-pane), `npm run build` clean (no new routes — rink ships inside `/game/[id]`). E2E not re-run — user's dev server still holds Next's project lock; the existing 2.12 + 3.x specs should still pass (game.spec.ts updated to assert the rink backdrop landmark instead of the placeholder). Re-verify on next clean run.
 
 ---
 
