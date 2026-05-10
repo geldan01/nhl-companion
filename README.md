@@ -52,6 +52,7 @@ UI components import only the per-module hook (and types) from `src/lib/nhl/<res
 | `boxscore` | `useBoxscore(id)` | `/api/nhl/game/[id]/boxscore` |
 | `team` | `useTeam(code)` | `/api/nhl/team/[code]` |
 | `roster` | `useRoster(code)` | `/api/nhl/team/[code]/roster` |
+| `teamSchedule` | `useTeamSchedule(code)` | `/api/nhl/team/[code]/schedule` |
 | `player` | `usePlayer(id)` | `/api/nhl/player/[id]` |
 | `standings` | `useStandings()` | `/api/nhl/standings` |
 | `stats` | `useSkaterStats()` / `useGoalieStats()` / `useTeamStats()` | `/api/nhl/stats?kind=…` |

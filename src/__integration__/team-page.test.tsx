@@ -49,10 +49,16 @@ describe("Team page", () => {
     expect(playerLinks.length).toBeGreaterThan(10);
   });
 
-  it("shows the recent-results placeholder", async () => {
+  it("renders the schedule sections from the teamSchedule fixture", async () => {
     renderWithProviders(<TeamPage code="BOS" />);
     await waitFor(() => {
-      expect(screen.getByText(/useTeamSchedule/i)).toBeInTheDocument();
+      expect(screen.getByText(/last 10 results/i)).toBeInTheDocument();
+      expect(screen.getByText(/next 5 upcoming/i)).toBeInTheDocument();
     });
+    // Each schedule row links to /game/[id]; assert at least one shows up.
+    const gameLinks = screen
+      .getAllByRole("link")
+      .filter((a) => a.getAttribute("href")?.startsWith("/game/"));
+    expect(gameLinks.length).toBeGreaterThan(0);
   });
 });

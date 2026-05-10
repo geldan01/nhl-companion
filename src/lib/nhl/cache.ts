@@ -29,6 +29,7 @@ export const TTL = {
   standings: 5 * 60,
   team: 60 * 60,
   roster: 60 * 60,
+  teamSchedule: 60 * 60,
   player: 24 * 60 * 60,
   stats: 5 * 60,
 };
@@ -42,6 +43,7 @@ export const STALE = {
   standings: MINUTE,
   team: 30 * MINUTE,
   roster: 30 * MINUTE,
+  teamSchedule: 30 * MINUTE,
   player: HOUR,
   stats: MINUTE,
 };
@@ -55,6 +57,7 @@ export const POLL = {
   standings: false as const,
   team: false as const,
   roster: false as const,
+  teamSchedule: false as const,
   player: false as const,
   stats: false as const,
 };

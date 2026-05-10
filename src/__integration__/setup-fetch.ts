@@ -11,6 +11,7 @@ import goalie from "@/lib/nhl/stats/__fixtures__/goalie.json";
 import skater from "@/lib/nhl/stats/__fixtures__/skater.json";
 import teamStats from "@/lib/nhl/stats/__fixtures__/team.json";
 import team from "@/lib/nhl/team/__fixtures__/team.json";
+import teamSchedule from "@/lib/nhl/teamSchedule/__fixtures__/teamSchedule.json";
 
 type Route = { match: (u: URL) => boolean; data: unknown };
 
@@ -54,6 +55,10 @@ const ROUTES: Route[] = [
   {
     match: (u) => /^\/api\/nhl\/team\/[A-Z]+\/roster$/.test(u.pathname),
     data: roster,
+  },
+  {
+    match: (u) => /^\/api\/nhl\/team\/[A-Z]+\/schedule$/.test(u.pathname),
+    data: teamSchedule,
   },
   { match: (u) => /^\/api\/nhl\/team\/[A-Z]+$/.test(u.pathname), data: team },
   // Constrained to the fixture's actual player id so empty-state tests can

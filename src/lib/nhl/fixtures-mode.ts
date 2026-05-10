@@ -17,6 +17,7 @@ import goalie from "./stats/__fixtures__/goalie.json";
 import skater from "./stats/__fixtures__/skater.json";
 import teamStats from "./stats/__fixtures__/team.json";
 import team from "./team/__fixtures__/team.json";
+import teamSchedule from "./teamSchedule/__fixtures__/teamSchedule.json";
 
 type Match = (u: URL) => boolean;
 type Entry = { match: Match; data: unknown };
@@ -48,6 +49,10 @@ const ENTRIES: Entry[] = [
   {
     match: (u) => /^\/v1\/roster\/[A-Z]+\/current$/.test(u.pathname),
     data: roster,
+  },
+  {
+    match: (u) => /^\/v1\/club-schedule-season\/[A-Z]+\/now$/.test(u.pathname),
+    data: teamSchedule,
   },
   {
     match: (u) => /^\/v1\/player\/\d+\/landing$/.test(u.pathname),
