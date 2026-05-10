@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Emit a minimal self-contained server bundle at .next/standalone for the
+  // Docker runtime image (see Dockerfile). Required for the small final image.
+  output: "standalone",
   images: {
     remotePatterns: [
       // Object form (not the URL shorthand) so that omitting `search`

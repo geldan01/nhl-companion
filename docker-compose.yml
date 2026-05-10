@@ -1,0 +1,32 @@
+# Coolify reads this file to deploy the app.
+# Coolify will:
+#   - build the image from the Dockerfile in this repo
+#   - inject SERVICE_FQDN_NHLCOMPANION_3000 (the public FQDN it generated)
+#   - route HTTPS traffic from that FQDN to port 3000 inside the container
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Coolify reads this label to wire up its Traefik proxy. The literal
+    # SERVICE_FQDN_NHLCOMPANION_3000 is resolved by Coolify on deploy.
+    environment:
+      - NODE_ENV=production
+      - NEXT_TELEMETRY_DISABLED=1
+      # Set NHL_FIXTURES_MODE=1 in Coolify to serve recorded fixtures instead
+      # of hitting api-web.nhle.com (useful for staging / offline demos).
+      - NHL_FIXTURES_MODE=${NHL_FIXTURES_MODE:-0}
+      - SERVICE_FQDN_NHLCOMPANION_3000
+    expose:
+      - "3000"
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://127.0.0.1:3000/').then(r => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s

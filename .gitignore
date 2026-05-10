@@ -48,3 +48,13 @@ next-env.d.ts
 /playwright-report/
 /playwright/.cache/
 /blob-report/
+/.playwright-mcp/
+
+# Claude Code MCP config (per-developer tooling)
+/.mcp.json
+
+# Dev-only screenshots dumped at repo root by browser tools / smoke tests.
+# Scoped to root only so legit assets under src/ or public/ are unaffected.
+/*.png
+/*.jpg
+/*.jpeg
