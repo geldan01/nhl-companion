@@ -34,6 +34,6 @@ test.describe("Game detail", () => {
     // No tabs on desktop; instead, all three panes share the same screen.
     await expect(page.getByRole("tab", { name: /plays/i })).toHaveCount(0);
     await expect(page.getByText(/team stats/i)).toBeVisible();
-    await expect(page.getByText(/Shot map lands in Phase 4/i)).toBeVisible();
+    await expect(page.getByRole("img", { name: /rink backdrop/i })).toBeVisible();
   });
 });

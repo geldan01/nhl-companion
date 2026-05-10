@@ -5,7 +5,12 @@ import { scaleLinear } from "d3-scale";
 // coordinates — these scales project them to feet for SVG positioning.
 export const RINK_LENGTH_FT = 100;
 export const RINK_WIDTH_FT = 85;
-export const GOAL_X_FT = RINK_LENGTH_FT - 11; // NHL goal line is 11ft from end
+// In our simplified half-rink model, the attacking goal sits at the right
+// edge of the SVG (matches `normalizeShot`'s "x = 1 means at the attacking
+// goal" convention). Real NHL geometry has the goal line ~11ft from the end
+// boards; the rink art also fudges that to keep math and visuals aligned.
+// Acceptable for a v1 shot map.
+export const GOAL_X_FT = RINK_LENGTH_FT;
 export const GOAL_Y_FT = RINK_WIDTH_FT / 2;
 
 export const xScale = scaleLinear().domain([0, 1]).range([0, RINK_LENGTH_FT]);

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { DataState } from "@/components/data-state";
 import { Skeleton } from "@/components/skeleton";
 import { getTeamColors } from "@/lib/team-colors";
@@ -9,7 +10,13 @@ import {
   usePlayByPlay,
 } from "@/lib/nhl/playByPlay";
 
-export function PlaysPane({ id }: { id: number }) {
+export type PlaysPaneProps = {
+  id: number;
+  selectedEventId?: number | null;
+  onSelectEvent?: (eventId: number | null) => void;
+};
+
+export function PlaysPane({ id, selectedEventId, onSelectEvent }: PlaysPaneProps) {
   const query = usePlayByPlay(id);
   return (
     <DataState
@@ -18,12 +25,26 @@ export function PlaysPane({ id }: { id: number }) {
       hasData={Boolean(query.data)}
       skeleton={<div className="p-3"><Skeleton variant="row" count={8} /></div>}
     >
-      {query.data ? <Plays response={query.data} /> : null}
+      {query.data ? (
+        <Plays
+          response={query.data}
+          selectedEventId={selectedEventId ?? null}
+          onSelectEvent={onSelectEvent}
+        />
+      ) : null}
     </DataState>
   );
 }
 
-function Plays({ response }: { response: NonNullable<ReturnType<typeof usePlayByPlay>["data"]> }) {
+function Plays({
+  response,
+  selectedEventId,
+  onSelectEvent,
+}: {
+  response: NonNullable<ReturnType<typeof usePlayByPlay>["data"]>;
+  selectedEventId: number | null;
+  onSelectEvent?: (eventId: number | null) => void;
+}) {
   const players = new Map<number, PlayByPlayRosterSpot>();
   for (const r of response.rosterSpots) players.set(r.playerId, r);
 
@@ -34,6 +55,17 @@ function Plays({ response }: { response: NonNullable<ReturnType<typeof usePlayBy
 
   const sorted = [...response.plays].sort((a, b) => b.sortOrder - a.sortOrder);
 
+  // When a shot dot is clicked over in RinkPane, scroll the matching play row
+  // into view. Pure DOM side-effect; no setState in this effect.
+  const lastScrolledRef = useRef<number | null>(null);
+  useEffect(() => {
+    if (selectedEventId === null) return;
+    if (lastScrolledRef.current === selectedEventId) return;
+    lastScrolledRef.current = selectedEventId;
+    const el = document.getElementById(`play-${selectedEventId}`);
+    el?.scrollIntoView({ block: "center", behavior: "smooth" });
+  }, [selectedEventId]);
+
   return (
     <ul role="list" className="divide-y divide-(--border)">
       {sorted.map((play) => (
@@ -42,6 +74,8 @@ function Plays({ response }: { response: NonNullable<ReturnType<typeof usePlayBy
           play={play}
           players={players}
           teamCodeById={teamCodeById}
+          isSelected={play.eventId === selectedEventId}
+          onSelect={onSelectEvent}
         />
       ))}
     </ul>
@@ -52,10 +86,14 @@ function PlayRow({
   play,
   players,
   teamCodeById,
+  isSelected,
+  onSelect,
 }: {
   play: Play;
   players: Map<number, PlayByPlayRosterSpot>;
   teamCodeById: Map<number, string>;
+  isSelected: boolean;
+  onSelect?: (eventId: number | null) => void;
 }) {
   const isGoal = play.typeDescKey === "goal";
   const isPenalty = play.typeDescKey === "penalty";
@@ -64,16 +102,23 @@ function PlayRow({
   const stripeColor = teamCode ? getTeamColors(teamCode).primary : "transparent";
   const period = play.periodDescriptor.number ?? 0;
 
+  const interactive = Boolean(onSelect);
+  const baseClass = isGoal
+    ? "bg-(--accent)/10 font-medium"
+    : isPenalty
+      ? "bg-(--live)/5"
+      : "";
+  const selectedClass = isSelected
+    ? " outline outline-2 outline-(--accent) outline-offset-[-2px]"
+    : "";
+
   return (
     <li
       id={`play-${play.eventId}`}
-      className={`relative flex gap-3 px-3 py-2 text-sm ${
-        isGoal
-          ? "bg-(--accent)/10 font-medium"
-          : isPenalty
-            ? "bg-(--live)/5"
-            : ""
+      className={`relative flex gap-3 px-3 py-2 text-sm ${baseClass}${selectedClass} ${
+        interactive ? "cursor-pointer" : ""
       }`}
+      onClick={onSelect ? () => onSelect(isSelected ? null : play.eventId) : undefined}
     >
       <span
         aria-hidden

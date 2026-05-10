@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { DataState } from "@/components/data-state";
 import { BoxPane } from "@/components/game/box-pane";
 import { GameBody } from "@/components/game/game-body";
 import { PlaysPane } from "@/components/game/plays-pane";
 import { ScoreHeader } from "@/components/game/score-header";
+import { RinkPane } from "@/components/rink/RinkPane";
 import { Skeleton } from "@/components/skeleton";
 import { useGame } from "@/lib/nhl/game";
 import { useWatching } from "@/lib/watching";
@@ -40,6 +41,17 @@ export function GameDetail({ id }: { id: number }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id, dataReady, setWatching]);
 
+  // Lifted state for the bidirectional shot ↔ play link. RinkPane sets it
+  // when a dot is clicked; PlaysPane reacts by scrolling and highlighting
+  // the matching row. Auto-clears after 2.5s so a "click for a moment" UX
+  // doesn't leave the highlight stuck.
+  const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
+  useEffect(() => {
+    if (selectedEventId === null) return;
+    const timer = setTimeout(() => setSelectedEventId(null), 2500);
+    return () => clearTimeout(timer);
+  }, [selectedEventId]);
+
   return (
     <DataState
       isLoading={game.isLoading}
@@ -56,19 +68,25 @@ export function GameDetail({ id }: { id: number }) {
         <>
           <ScoreHeader game={game.data} />
           <GameBody
-            plays={<PlaysPane id={id} />}
+            plays={
+              <PlaysPane
+                id={id}
+                selectedEventId={selectedEventId}
+                onSelectEvent={setSelectedEventId}
+              />
+            }
             box={<BoxPane id={id} />}
-            rink={<PanePlaceholder>Shot map lands in Phase 4.</PanePlaceholder>}
+            rink={
+              <RinkPane
+                id={id}
+                selectedEventId={selectedEventId}
+                onSelectEvent={setSelectedEventId}
+              />
+            }
           />
         </>
       ) : null}
     </DataState>
-  );
-}
-
-function PanePlaceholder({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="p-4 text-sm text-(--text-muted)">{children}</div>
   );
 }
 

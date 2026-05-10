@@ -87,10 +87,10 @@ describe("Game detail", () => {
     setMatchMedia(true); // override: desktop
     renderWithProviders(<GameDetail id={FIXTURE_GAME_ID} />);
     await waitFor(() => {
-      // Plays pane content (some play description) AND box pane content
-      // (Team stats label) are both present at the same time.
+      // Box pane (Team stats label) AND rink pane (the rink backdrop SVG)
+      // are both present at the same time.
       expect(screen.getByText(/team stats/i)).toBeInTheDocument();
-      expect(screen.getByText(/Shot map lands in Phase 4/i)).toBeInTheDocument();
+      expect(screen.getByRole("img", { name: /rink backdrop/i })).toBeInTheDocument();
     });
   });
 
