@@ -173,7 +173,7 @@ Replaces the Phase 2 `<RinkPane>` placeholder with the real visualization. Intro
 
   Counting helper walks `<g>` children of the overlay SVG — works uniformly across all four ShotDot variants (each renders one `<g>` regardless of inner shape).
 
-- [ ] **4.10 Update README.** Add a "Visualizations" subsection under the existing data-layer doc covering: where the rink lives, how to add a new overlay, the React–D3 split rule. Brief — the spec is the source of truth.
+- [x] **4.10 Update README.** Done. Added a "Visualizations" section after the error-pattern notes. Covers the rink file layout (one-line each: scales / RinkBackdrop / ShotDot / RinkControls / RinkPane), the React–D3 split rule (D3 for math, React JSX for DOM), and a how-to-add-an-overlay note pointing at `d3-shape` for path generation.
 
 - [ ] **4.11 Commit Phase 4.** All tests green: `npm run lint && npm run test:run && npm run build && npm run test:e2e`. Commit message: `feat(ui): shot map (D3 scales + half-rink offensive overlay)`.
 

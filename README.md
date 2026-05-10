@@ -107,3 +107,26 @@ UI patterns (suggested, not yet implemented):
 - `network` / `timeout` — transient. Show a small "data delayed" indicator; React Query keeps polling.
 - `schema` / `http 5xx` — hard. Banner; show stale data if available.
 - `http 4xx` — empty state for that view (game/player/team not found).
+
+## Visualizations
+
+The shot map under [`src/components/rink/`](src/components/rink/) is the project's first non-tabular visualization. Design notes live in the app-shell spec ([`docs/superpowers/specs/2026-05-09-app-shell-and-navigation-design.md`](docs/superpowers/specs/2026-05-09-app-shell-and-navigation-design.md#shot-map)); the file layout:
+
+| File | What |
+|---|---|
+| `scales.ts` | `xScale` / `yScale` (d3-scale linear), `distanceFromGoal`, `isShotKind`, `shotKindOf`, rink dimension constants. |
+| `RinkBackdrop.tsx` | Pure-static SVG of the half-rink (boards, blue line, goal, faceoff dots). No props beyond `className`. |
+| `ShotDot.tsx` | One dot per play. Switches on `kind` for the visual encoding (filled circle / open ring / X). |
+| `RinkControls.tsx` | Controlled filter UI (teams, kinds, period). `RinkFilterState` shape exported. |
+| `RinkPane.tsx` | The container. Consumes `useGame` + `usePlayByPlay`, projects shots into SVG-feet, overlays dots on the backdrop, owns the tooltip + filter state. |
+
+### React–D3 split
+
+**D3 owns math, React owns the DOM.** No `d3.select(ref.current)` mutating SVG. Pattern:
+
+```ts
+const positions = useMemo(() => buildPoints(plays, players, homeTeamId), [...]);
+return positions.map((p) => <circle key={p.id} cx={p.cx} cy={p.cy} ... />);
+```
+
+Adding a new overlay (heatmap, voronoi hover targets, contour map, …): build the geometry in a `useMemo` over the play list, then render React JSX. If you need a path, use `d3-shape`'s generators to *produce the `d` string* and feed it to a JSX `<path d={...} />` — don't append elements imperatively.
