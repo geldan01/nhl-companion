@@ -44,8 +44,10 @@ export const GameResponse = z
     startTimeUTC: z.string(),
     awayTeam: TeamGameSummary,
     homeTeam: TeamGameSummary,
-    periodDescriptor: PeriodDescriptor,
-    clock: Clock,
+    // FUT (and sometimes PRE) games omit periodDescriptor and clock entirely;
+    // they only show up once the game is live or final.
+    periodDescriptor: PeriodDescriptor.optional(),
+    clock: Clock.optional(),
   })
   .passthrough();
 

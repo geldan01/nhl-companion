@@ -1,4 +1,4 @@
-import { screen, waitFor, within } from "@testing-library/react";
+import { fireEvent, screen, waitFor, within } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { renderWithProviders } from "./render";
 import { installFetchMock } from "./setup-fetch";
@@ -44,6 +44,11 @@ describe("Game detail", () => {
     mockReplace.mockReset();
     mockPush.mockReset();
     setMatchMedia(false); // mobile by default; tests can override
+    // The mobile tabs use the URL hash; clear any leftover (`#box`, `#shots`)
+    // from a previous test so each test starts on the Plays tab.
+    if (window.location.hash) {
+      history.replaceState(null, "", window.location.pathname + window.location.search);
+    }
   });
 
   afterEach(() => {
@@ -54,10 +59,12 @@ describe("Game detail", () => {
   it("renders the score header with both teams from the fixture", async () => {
     renderWithProviders(<GameDetail id={FIXTURE_GAME_ID} />);
     await waitFor(() => {
-      // Fixture: PHI 0, CAR 3.
+      // Fixture: PHI 0, CAR 3. The header is a linescore now (per-period
+      // goals + total), so assert the total cells specifically rather than a
+      // bare text match — the PHI row has zeros in every column.
       const header = screen.getByRole("banner", { name: /game header/i });
-      expect(within(header).getByText("0")).toBeInTheDocument();
-      expect(within(header).getByText("3")).toBeInTheDocument();
+      expect(within(header).getByTestId("team-total-PHI")).toHaveTextContent("0");
+      expect(within(header).getByTestId("team-total-CAR")).toHaveTextContent("3");
     });
   });
 
@@ -103,6 +110,76 @@ describe("Game detail", () => {
     });
     screen.getByRole("button", { name: /stop watching this game/i }).click();
     expect(mockPush).toHaveBeenCalledWith("/");
+  });
+
+  it("plays list shows committedBy + drawnBy names on a penalty row", async () => {
+    renderWithProviders(<GameDetail id={FIXTURE_GAME_ID} />);
+    await waitFor(() => {
+      // The penalty row text uses "drew" between the two players (see plays-pane).
+      expect(screen.getAllByText(/drew Mark Jankowski/).length).toBeGreaterThan(0);
+    });
+  });
+
+  it("plays list shows hitter and hittee on a hit row", async () => {
+    renderWithProviders(<GameDetail id={FIXTURE_GAME_ID} />);
+    await waitFor(() => {
+      expect(
+        screen.getAllByText(/Hit by Garnet Hathaway on/).length,
+      ).toBeGreaterThan(0);
+    });
+  });
+
+  it("plays list shows the faceoff winner by name", async () => {
+    renderWithProviders(<GameDetail id={FIXTURE_GAME_ID} />);
+    // Mark Jankowski wins multiple faceoffs in this fixture, so use getAllByText.
+    await waitFor(() => {
+      expect(
+        screen.getAllByText(/Faceoff won by Mark Jankowski/).length,
+      ).toBeGreaterThan(0);
+    });
+  });
+
+  it("on desktop, clicking a penalty row swaps boxscore for player pane with both players", async () => {
+    setMatchMedia(true);
+    renderWithProviders(<GameDetail id={FIXTURE_GAME_ID} />);
+    await waitFor(() => {
+      expect(screen.getByText(/team stats/i)).toBeInTheDocument();
+    });
+
+    // Click the first penalty row.
+    const penaltyRow = screen.getByText(/drew Mark Jankowski/).closest("li");
+    expect(penaltyRow).not.toBeNull();
+    fireEvent.click(penaltyRow!);
+
+    await waitFor(() => {
+      // Boxscore is gone …
+      expect(screen.queryByText(/team stats/i)).not.toBeInTheDocument();
+      // … replaced by the player pane with both role labels.
+      expect(screen.getByText(/penalty on/i)).toBeInTheDocument();
+      expect(screen.getByText(/drawn by/i)).toBeInTheDocument();
+      // The Close button is rendered by PlayerPane.
+      expect(
+        screen.getByRole("button", { name: /close player details/i }),
+      ).toBeInTheDocument();
+    });
+  });
+
+  it("on desktop, clicking the same row again clears the selection and restores the boxscore", async () => {
+    setMatchMedia(true);
+    renderWithProviders(<GameDetail id={FIXTURE_GAME_ID} />);
+    await waitFor(() => {
+      expect(screen.getByText(/team stats/i)).toBeInTheDocument();
+    });
+
+    const row = screen.getByText(/Hit by Garnet Hathaway on Mark Jankowski/).closest("li");
+    fireEvent.click(row!);
+    await waitFor(() => {
+      expect(screen.queryByText(/team stats/i)).not.toBeInTheDocument();
+    });
+    fireEvent.click(row!);
+    await waitFor(() => {
+      expect(screen.getByText(/team stats/i)).toBeInTheDocument();
+    });
   });
 
   it("renders the empty state when the game id has no fixture (404 from setup-fetch)", async () => {

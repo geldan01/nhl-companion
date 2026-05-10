@@ -102,7 +102,7 @@ function ToggleGroup<T extends string>({
           type="button"
           aria-pressed={it.on}
           onClick={() => onToggle(it.id)}
-          className={`rounded-full border px-2 py-0.5 transition-colors ${
+          className={`inline-flex min-h-6 items-center rounded-full border px-2.5 py-1 transition-colors ${
             it.on
               ? "border-(--accent) bg-(--accent)/15 text-(--text)"
               : "border-(--border) bg-(--surface) text-(--text-muted)"
@@ -139,7 +139,7 @@ function Segmented({
           role="radio"
           aria-checked={value === opt.value}
           onClick={() => onChange(opt.value)}
-          className={`rounded-full px-2 py-0.5 transition-colors ${
+          className={`inline-flex min-h-6 items-center rounded-full px-2.5 py-1 transition-colors ${
             value === opt.value
               ? "bg-(--bg) text-(--text) shadow-sm"
               : "text-(--text-muted)"

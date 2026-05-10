@@ -1,2 +1,2 @@
 export { usePlayer } from './usePlayer';
-export type { PlayerResponse } from './schema';
+export type { PlayerResponse, PlayerFeaturedSubSeason } from './schema';

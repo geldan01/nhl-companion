@@ -112,13 +112,27 @@ function PlayRow({
     ? " outline outline-2 outline-(--accent) outline-offset-[-2px]"
     : "";
 
+  const activate = onSelect ? () => onSelect(isSelected ? null : play.eventId) : undefined;
   return (
     <li
       id={`play-${play.eventId}`}
       className={`relative flex gap-3 px-3 py-2 text-sm ${baseClass}${selectedClass} ${
         interactive ? "cursor-pointer" : ""
       }`}
-      onClick={onSelect ? () => onSelect(isSelected ? null : play.eventId) : undefined}
+      role={interactive ? "button" : undefined}
+      tabIndex={interactive ? 0 : undefined}
+      aria-pressed={interactive ? isSelected : undefined}
+      onClick={activate}
+      onKeyDown={
+        interactive
+          ? (e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                activate?.();
+              }
+            }
+          : undefined
+      }
     >
       <span
         aria-hidden
@@ -176,12 +190,31 @@ function PlayDescription({
       const shooter = name(play.details?.shootingPlayerId);
       return <span>Blocked shot{shooter ? ` — ${shooter}` : ""}</span>;
     }
-    case "faceoff":
-      return <span>Faceoff{teamCode ? ` won by ${teamCode}` : ""}</span>;
-    case "hit":
-      return <span>Hit{teamCode ? ` by ${teamCode}` : ""}</span>;
-    case "penalty":
-      return <span>Penalty{teamCode ? ` — ${teamCode}` : ""}</span>;
+    case "faceoff": {
+      const winner = name(play.details?.winningPlayerId);
+      const tail = winner
+        ? ` won by ${winner}`
+        : teamCode
+          ? ` won by ${teamCode}`
+          : "";
+      return <span>{`Faceoff${tail}`}</span>;
+    }
+    case "hit": {
+      const hitter = name(play.details?.hittingPlayerId);
+      const hittee = name(play.details?.hitteePlayerId);
+      if (hitter && hittee) return <span>{`Hit by ${hitter} on ${hittee}`}</span>;
+      if (hitter) return <span>{`Hit by ${hitter}`}</span>;
+      return <span>{`Hit${teamCode ? ` by ${teamCode}` : ""}`}</span>;
+    }
+    case "penalty": {
+      const committed = name(play.details?.committedByPlayerId);
+      const drawn = name(play.details?.drawnByPlayerId);
+      const desc = play.details?.descKey?.replace(/-/g, " ");
+      const head = `Penalty${teamCode ? ` (${teamCode})` : ""}${desc ? ` — ${desc}` : ""}`;
+      const offender = committed ? ` · ${committed}` : "";
+      const drawnSuffix = drawn ? ` drew ${drawn}` : "";
+      return <span>{`${head}${offender}${drawnSuffix}`}</span>;
+    }
     case "stoppage":
       return <span className="text-(--text-muted)">Stoppage</span>;
     case "period-start":
@@ -190,10 +223,14 @@ function PlayDescription({
       return <span className="text-(--text-muted)">Period {play.periodDescriptor.number} end</span>;
     case "game-end":
       return <span className="text-(--text-muted)">Game end</span>;
-    case "takeaway":
-      return <span>Takeaway{teamCode ? ` — ${teamCode}` : ""}</span>;
-    case "giveaway":
-      return <span>Giveaway{teamCode ? ` — ${teamCode}` : ""}</span>;
+    case "takeaway": {
+      const actor = name(play.details?.playerId);
+      return <span>Takeaway{actor ? ` — ${actor}` : teamCode ? ` — ${teamCode}` : ""}</span>;
+    }
+    case "giveaway": {
+      const actor = name(play.details?.playerId);
+      return <span>Giveaway{actor ? ` — ${actor}` : teamCode ? ` — ${teamCode}` : ""}</span>;
+    }
     default:
       return <span className="text-(--text-muted)">{play.typeDescKey}</span>;
   }

@@ -27,8 +27,8 @@ function ActivePill({ watching }: { watching: WatchingSnapshot }) {
   const awayScore = live?.awayTeam.score ?? watching.awayScore;
   const homeScore = live?.homeTeam.score ?? watching.homeScore;
   const state = live?.gameState ?? watching.state;
-  const period = live?.periodDescriptor.number;
-  const clock = live?.clock.timeRemaining;
+  const period = live?.periodDescriptor?.number;
+  const clock = live?.clock?.timeRemaining;
 
   return (
     <Link

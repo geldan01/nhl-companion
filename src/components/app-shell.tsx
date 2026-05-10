@@ -48,9 +48,14 @@ function Header() {
 
 function Sidebar({ pathname }: { pathname: string }) {
   return (
-    <aside className="hidden w-56 shrink-0 border-r border-(--border) bg-(--bg) lg:flex lg:flex-col">
+    <aside
+      aria-label="Primary navigation"
+      className="hidden w-56 shrink-0 border-r border-(--border) bg-(--bg) lg:flex lg:flex-col"
+    >
       <div className="flex h-12 items-center border-b border-(--border) px-4 font-semibold tracking-tight">
-        Menu
+        <Link href="/" className="hover:underline">
+          NHL Companion
+        </Link>
       </div>
       <nav className="flex flex-col gap-1 p-3">
         {NAV_ITEMS.map((item) => (

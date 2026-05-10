@@ -1,57 +1,67 @@
 "use client";
 
 import Link from "next/link";
-import { useQueryClient } from "@tanstack/react-query";
 import { DataState } from "@/components/data-state";
 import { GameStatePill } from "@/components/game-state-pill";
 import { Skeleton } from "@/components/skeleton";
 import { TeamLogo } from "@/components/team-logo";
 import type { RosterPlayer, RosterResponse } from "@/lib/nhl/roster";
 import { useRoster } from "@/lib/nhl/roster";
-import type { StandingEntry, StandingsResponse } from "@/lib/nhl/standings";
+import type { StandingEntry } from "@/lib/nhl/standings";
+import { useStandings } from "@/lib/nhl/standings";
 import type { TeamScheduleGame } from "@/lib/nhl/teamSchedule";
 import { useTeamSchedule } from "@/lib/nhl/teamSchedule";
-import { getTeamColors, type TeamCode } from "@/lib/team-colors";
-
-const STANDINGS_QUERY_KEY = ["nhl", "standings"] as const;
+import { getTeamColors, teamFullName, type TeamCode } from "@/lib/team-colors";
 
 export function TeamPage({ code }: { code: string }) {
+  const { primary } = getTeamColors(code as TeamCode);
   const roster = useRoster(code);
 
-  // Opportunistic peek at the standings cache. Don't subscribe (no fetch on
-  // demand for this page) — just read whatever's there from a prior visit to
-  // /standings. Falls back gracefully when the cache is empty.
-  const queryClient = useQueryClient();
-  const cachedStandings = queryClient.getQueryData<StandingsResponse>(
-    STANDINGS_QUERY_KEY,
-  );
-  const entry = cachedStandings?.standings.find(
+  // Subscribe to standings so cold visits show division/record too. Same
+  // React Query key as /standings → no extra network on warm cache.
+  const standings = useStandings();
+  const entry = standings.data?.standings.find(
     (s) => s.teamAbbrev.default === code,
   );
 
+  // Subtle team-color wash. Stacked layers:
+  //   • radial glow at the top behind the hero (~40% alpha)
+  //   • thin linear tint that fades out around 40% of the page height
+  // Hex suffixes are 8-bit alpha — `66` ≈ 40%, `1F` ≈ 12%.
+  const background = `
+    radial-gradient(ellipse 95% 55% at 50% 0%, ${primary}66, transparent 65%),
+    linear-gradient(180deg, ${primary}1F, transparent 40%)
+  `;
+
   return (
-    <div className="mx-auto w-full max-w-5xl">
-      <Header code={code} entry={entry} />
-      <DataState
-        isLoading={roster.isLoading}
-        error={roster.error ?? null}
-        hasData={Boolean(roster.data)}
-        skeleton={
-          <div className="px-4 py-4">
-            <Skeleton variant="row" count={6} />
-          </div>
-        }
-      >
-        {roster.data ? <Sections code={code} roster={roster.data} /> : null}
-      </DataState>
+    <div className="relative min-h-full" style={{ background }}>
+      <div className="mx-auto w-full max-w-5xl">
+        <Header code={code} entry={entry} />
+        <DataState
+          isLoading={roster.isLoading}
+          error={roster.error ?? null}
+          hasData={Boolean(roster.data)}
+          skeleton={
+            <div className="px-4 py-4">
+              <Skeleton variant="row" count={6} />
+            </div>
+          }
+        >
+          {roster.data ? <Sections code={code} roster={roster.data} /> : null}
+        </DataState>
+      </div>
     </div>
   );
 }
 
 function Header({ code, entry }: { code: string; entry: StandingEntry | undefined }) {
-  const { primary } = getTeamColors(code as TeamCode);
-  const name = entry?.teamCommonName.default ?? code;
-  const place = entry?.placeName.default;
+  // Prefer the live standings name (which carries diacritics correctly via
+  // the API's localized strings); fall back to our static full-name map so
+  // we never display the bare 3-letter code.
+  const name =
+    entry?.placeName.default && entry.teamCommonName.default
+      ? `${entry.placeName.default} ${entry.teamCommonName.default}`
+      : teamFullName(code);
   const division = entry?.divisionName;
   const conference = entry?.conferenceName;
   const record = entry
@@ -60,21 +70,22 @@ function Header({ code, entry }: { code: string; entry: StandingEntry | undefine
   const seq = entry ? entry.divisionSequence : null;
 
   return (
-    <header
-      className="relative overflow-hidden border-b border-(--border)"
-      style={{ background: `linear-gradient(180deg, ${primary}30, transparent)` }}
-    >
-      <div className="flex items-center gap-4 px-4 py-6">
-        <TeamLogo code={code} size={72} />
+    <header className="px-4 pt-10 pb-8 sm:pt-14 sm:pb-10">
+      <div className="flex items-center gap-5 sm:gap-8">
+        {/* Fluid hero logo: clamps so it never exceeds 40vw on small screens
+            and never grows past 432 px on desktop. */}
+        <TeamLogo
+          code={code}
+          size="min(40vw, 432px)"
+          bare
+          className="shrink-0"
+        />
         <div className="min-w-0">
-          {place ? (
-            <p className="text-xs uppercase tracking-wide text-(--text-muted)">
-              {place}
-            </p>
-          ) : null}
-          <h1 className="text-2xl font-semibold tracking-tight">{name}</h1>
+          <h1 className="text-3xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+            {name}
+          </h1>
           {division ? (
-            <p className="text-xs text-(--text-muted)">
+            <p className="mt-2 text-xs text-(--text-muted) sm:text-sm">
               {division}
               {conference ? ` · ${conference}` : ""}
               {record ? ` · ${record}` : ""}

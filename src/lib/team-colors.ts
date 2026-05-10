@@ -99,3 +99,46 @@ export const TEAM_NAME_TO_CODE: Record<string, TeamCode> = {
 export function teamCodeForName(name: string): TeamCode | null {
   return TEAM_NAME_TO_CODE[name] ?? null;
 }
+
+// Code → full team name. Used as a fallback for the team page header when
+// the standings cache hasn't been populated yet (cold load, deep link).
+// One canonical name per code — Utah uses "Mammoth" (current), Montréal
+// keeps the accent.
+export const TEAM_FULL_NAME: Record<TeamCode, string> = {
+  ANA: "Anaheim Ducks",
+  BOS: "Boston Bruins",
+  BUF: "Buffalo Sabres",
+  CAR: "Carolina Hurricanes",
+  CBJ: "Columbus Blue Jackets",
+  CGY: "Calgary Flames",
+  CHI: "Chicago Blackhawks",
+  COL: "Colorado Avalanche",
+  DAL: "Dallas Stars",
+  DET: "Detroit Red Wings",
+  EDM: "Edmonton Oilers",
+  FLA: "Florida Panthers",
+  LAK: "Los Angeles Kings",
+  MIN: "Minnesota Wild",
+  MTL: "Montréal Canadiens",
+  NJD: "New Jersey Devils",
+  NSH: "Nashville Predators",
+  NYI: "New York Islanders",
+  NYR: "New York Rangers",
+  OTT: "Ottawa Senators",
+  PHI: "Philadelphia Flyers",
+  PIT: "Pittsburgh Penguins",
+  SEA: "Seattle Kraken",
+  SJS: "San Jose Sharks",
+  STL: "St. Louis Blues",
+  TBL: "Tampa Bay Lightning",
+  TOR: "Toronto Maple Leafs",
+  UTA: "Utah Mammoth",
+  VAN: "Vancouver Canucks",
+  VGK: "Vegas Golden Knights",
+  WPG: "Winnipeg Jets",
+  WSH: "Washington Capitals",
+};
+
+export function teamFullName(code: string): string {
+  return (TEAM_FULL_NAME as Record<string, string>)[code] ?? code;
+}

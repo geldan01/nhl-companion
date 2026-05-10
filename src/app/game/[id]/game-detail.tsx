@@ -4,7 +4,9 @@ import { useEffect, useState } from "react";
 import { DataState } from "@/components/data-state";
 import { BoxPane } from "@/components/game/box-pane";
 import { GameBody } from "@/components/game/game-body";
+import { PlayerPane } from "@/components/game/player-pane";
 import { PlaysPane } from "@/components/game/plays-pane";
+import { PreGamePane } from "@/components/game/pre-game-pane";
 import { ScoreHeader } from "@/components/game/score-header";
 import { RinkPane } from "@/components/rink/RinkPane";
 import { Skeleton } from "@/components/skeleton";
@@ -42,15 +44,11 @@ export function GameDetail({ id }: { id: number }) {
   }, [id, dataReady, setWatching]);
 
   // Lifted state for the bidirectional shot ↔ play link. RinkPane sets it
-  // when a dot is clicked; PlaysPane reacts by scrolling and highlighting
-  // the matching row. Auto-clears after 2.5s so a "click for a moment" UX
-  // doesn't leave the highlight stuck.
+  // when a dot is clicked; PlaysPane scrolls to and highlights the matching
+  // row; the right pane swaps from BoxPane to PlayerPane. Selection persists
+  // until the user picks another play or clicks the same row/dot again to
+  // toggle off (handled inside PlaysPane and RinkPane).
   const [selectedEventId, setSelectedEventId] = useState<number | null>(null);
-  useEffect(() => {
-    if (selectedEventId === null) return;
-    const timer = setTimeout(() => setSelectedEventId(null), 2500);
-    return () => clearTimeout(timer);
-  }, [selectedEventId]);
 
   return (
     <DataState
@@ -66,24 +64,42 @@ export function GameDetail({ id }: { id: number }) {
     >
       {game.data ? (
         <>
-          <ScoreHeader game={game.data} />
-          <GameBody
-            plays={
-              <PlaysPane
-                id={id}
-                selectedEventId={selectedEventId}
-                onSelectEvent={setSelectedEventId}
-              />
-            }
-            box={<BoxPane id={id} />}
-            rink={
-              <RinkPane
-                id={id}
-                selectedEventId={selectedEventId}
-                onSelectEvent={setSelectedEventId}
-              />
-            }
+          <ScoreHeader
+            game={game.data}
+            updatedAt={game.dataUpdatedAt}
+            isFetching={game.isFetching}
           />
+          {game.data.gameState === "FUT" || game.data.gameState === "PRE" ? (
+            <PreGamePane game={game.data} />
+          ) : (
+            <GameBody
+              plays={
+                <PlaysPane
+                  id={id}
+                  selectedEventId={selectedEventId}
+                  onSelectEvent={setSelectedEventId}
+                />
+              }
+              box={
+                selectedEventId !== null ? (
+                  <PlayerPane
+                    id={id}
+                    eventId={selectedEventId}
+                    onClose={() => setSelectedEventId(null)}
+                  />
+                ) : (
+                  <BoxPane id={id} />
+                )
+              }
+              rink={
+                <RinkPane
+                  id={id}
+                  selectedEventId={selectedEventId}
+                  onSelectEvent={setSelectedEventId}
+                />
+              }
+            />
+          )}
         </>
       ) : null}
     </DataState>

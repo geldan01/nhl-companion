@@ -1,3 +1,4 @@
+import type { KeyboardEvent } from "react";
 import type { ShotKind } from "./scales";
 
 export type ShotDotProps = {
@@ -11,6 +12,10 @@ export type ShotDotProps = {
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
 };
+
+// SVG hit-area radius. The visible glyph is 1.2-2.6 svg-units; this enlarges
+// the click/tap target without changing visuals. 4 ≈ 24px on a typical rink.
+const HIT_R = 4;
 
 export function ShotDot({
   cx,
@@ -26,14 +31,27 @@ export function ShotDot({
   const color = side === "home" ? "var(--home)" : "var(--away)";
   const interactive = Boolean(onClick);
 
+  const handleKeyDown = (e: KeyboardEvent<SVGGElement>) => {
+    if (!onClick) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onClick();
+    }
+  };
+
   const common = {
     onClick,
     onMouseEnter,
     onMouseLeave,
+    onKeyDown: handleKeyDown,
     tabIndex: interactive ? 0 : undefined,
     role: interactive ? ("button" as const) : undefined,
     style: { cursor: interactive ? "pointer" : "default" },
   };
+
+  const hitArea = interactive ? (
+    <circle cx={cx} cy={cy} r={HIT_R} fill="transparent" />
+  ) : null;
 
   const focusRing = focused ? (
     <circle
@@ -51,9 +69,9 @@ export function ShotDot({
     case "goal":
       return (
         <g {...common}>
+          {hitArea}
           {focusRing}
-          {/* gold ring for goals — extra visual weight */}
-          <circle cx={cx} cy={cy} r={2.6} fill="none" stroke="#f5c542" strokeWidth="0.7" />
+          <circle cx={cx} cy={cy} r={2.6} fill="none" stroke="var(--goal-ring)" strokeWidth="0.7" />
           <circle cx={cx} cy={cy} r={2.2} fill={color}>
             {title ? <title>{title}</title> : null}
           </circle>
@@ -62,6 +80,7 @@ export function ShotDot({
     case "shot-on-goal":
       return (
         <g {...common}>
+          {hitArea}
           {focusRing}
           <circle cx={cx} cy={cy} r={1.5} fill={color}>
             {title ? <title>{title}</title> : null}
@@ -71,6 +90,7 @@ export function ShotDot({
     case "missed-shot":
       return (
         <g {...common}>
+          {hitArea}
           {focusRing}
           <circle cx={cx} cy={cy} r={1.5} fill="none" stroke={color} strokeWidth="0.5">
             {title ? <title>{title}</title> : null}
@@ -81,6 +101,7 @@ export function ShotDot({
       const r = 1.2;
       return (
         <g {...common}>
+          {hitArea}
           {focusRing}
           <line x1={cx - r} y1={cy - r} x2={cx + r} y2={cy + r} stroke={color} strokeWidth="0.5" />
           <line x1={cx - r} y1={cy + r} x2={cx + r} y2={cy - r} stroke={color} strokeWidth="0.5">

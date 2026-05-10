@@ -145,9 +145,10 @@ function StandingsCard({
           {rows.map((entry, i) => (
             <tr
               key={entry.teamAbbrev.default}
+              aria-label={i + 1 === playoffLine ? "Last playoff position" : undefined}
               className={`hover:bg-(--surface-hover) ${
                 i + 1 === playoffLine
-                  ? "border-b-2 border-(--accent)/40"
+                  ? "border-b-[3px] border-dashed border-(--accent)"
                   : "border-b border-(--border)"
               }`}
             >

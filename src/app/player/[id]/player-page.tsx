@@ -2,11 +2,14 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { useState } from "react";
 import { DataState } from "@/components/data-state";
+import { InitialsAvatar } from "@/components/initials-avatar";
 import { Skeleton } from "@/components/skeleton";
 import { TeamLogo } from "@/components/team-logo";
 import { usePlayer } from "@/lib/nhl/player";
 import type { PlayerResponse } from "@/lib/nhl/player";
+import { getTeamColors } from "@/lib/team-colors";
 
 // Schema is .passthrough() so the rich totals/stats fields are present at
 // runtime even though they aren't in the typed surface. Local extension type
@@ -51,71 +54,139 @@ type RichPlayer = PlayerResponse & {
 export function PlayerPage({ id }: { id: number }) {
   const player = usePlayer(id);
   return (
-    <div className="mx-auto w-full max-w-5xl px-4 py-6">
-      <DataState
-        isLoading={player.isLoading}
-        error={player.error ?? null}
-        hasData={Boolean(player.data)}
-        skeleton={
+    <DataState
+      isLoading={player.isLoading}
+      error={player.error ?? null}
+      hasData={Boolean(player.data)}
+      skeleton={
+        <div className="mx-auto w-full max-w-5xl px-4 py-6">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[300px_1fr]">
             <Skeleton variant="card" />
             <Skeleton variant="row" count={8} />
           </div>
-        }
-        emptyState={
-          <div className="px-4 py-12 text-center text-sm text-(--text-muted)">
-            Player not found.
-          </div>
-        }
-      >
-        {player.data ? <Layout data={player.data as RichPlayer} /> : null}
-      </DataState>
-    </div>
+        </div>
+      }
+      emptyState={
+        <div className="px-4 py-12 text-center text-sm text-(--text-muted)">
+          Player not found.
+        </div>
+      }
+    >
+      {player.data ? <Layout data={player.data as RichPlayer} /> : null}
+    </DataState>
   );
 }
 
 function Layout({ data }: { data: RichPlayer }) {
+  const { primary } = getTeamColors(data.currentTeamAbbrev ?? "");
+  // Same subtle team-color wash used on the team page — radial glow at top,
+  // thin linear tint fading out around 40% of the page height.
+  const background = `
+    radial-gradient(ellipse 95% 55% at 50% 0%, ${primary}66, transparent 65%),
+    linear-gradient(180deg, ${primary}1F, transparent 40%)
+  `;
   return (
-    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[300px_1fr]">
-      <Bio data={data} />
-      <Stats data={data} />
+    <div className="relative min-h-full" style={{ background }}>
+      <div className="mx-auto w-full max-w-5xl px-4 py-6">
+        <Hero data={data} />
+        <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[300px_1fr]">
+          <Bio data={data} />
+          <Stats data={data} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Hero({ data }: { data: RichPlayer }) {
+  const fullName = `${data.firstName.default} ${data.lastName.default}`;
+  const teamCode = data.currentTeamAbbrev;
+  const teamName = data.fullTeamName?.default ?? teamCode;
+  const eyebrow = data.sweaterNumber
+    ? `#${data.sweaterNumber} · ${positionFullName(data.position)}`
+    : positionFullName(data.position);
+  const { primary, secondary } = getTeamColors(teamCode ?? "");
+
+  return (
+    <header className="pt-4 pb-2 sm:pt-8 sm:pb-4">
+      <div className="flex items-center gap-5 sm:gap-8">
+        {/* Medal-style headshot moved into the hero so the page doesn't
+            land with a half-empty fold. Falls back to InitialsAvatar on
+            CDN miss. */}
+        <div className="shrink-0 w-32 sm:w-40 lg:w-48">
+          <HeroHeadshot
+            url={data.headshot}
+            name={fullName}
+            primary={primary}
+            secondary={secondary}
+          />
+        </div>
+        <div className="min-w-0">
+          <p className="text-xs font-medium uppercase tracking-[0.25em] text-(--text-muted) sm:text-sm">
+            {eyebrow}
+          </p>
+          <h1 className="mt-1 text-3xl font-bold tracking-tight sm:text-5xl lg:text-6xl">
+            {fullName}
+          </h1>
+          {teamCode ? (
+            <Link
+              href={`/team/${teamCode}`}
+              className="mt-3 inline-flex items-center gap-3 hover:underline"
+            >
+              <TeamLogo code={teamCode} size={32} bare />
+              <span className="text-base font-semibold sm:text-lg lg:text-xl">{teamName}</span>
+            </Link>
+          ) : null}
+        </div>
+      </div>
+    </header>
+  );
+}
+
+function HeroHeadshot({
+  url,
+  name,
+  primary,
+  secondary,
+}: {
+  url: string;
+  name: string;
+  primary: string;
+  secondary: string;
+}) {
+  const [errored, setErrored] = useState(false);
+  return (
+    <div
+      className="aspect-square rounded-full p-0.75 shadow-xl"
+      style={{ background: `linear-gradient(135deg, ${primary}, ${secondary})` }}
+    >
+      <div className="h-full w-full overflow-hidden rounded-full bg-(--surface) ring-2 ring-(--bg)">
+        {url && !errored ? (
+          <Image
+            src={url}
+            alt={name}
+            width={300}
+            height={300}
+            className="h-full w-full object-cover"
+            priority
+            onError={() => setErrored(true)}
+          />
+        ) : (
+          <InitialsAvatar
+            name={name}
+            size={192}
+            rounded="full"
+            className="h-full w-full"
+          />
+        )}
+      </div>
     </div>
   );
 }
 
 function Bio({ data }: { data: RichPlayer }) {
-  const fullName = `${data.firstName.default} ${data.lastName.default}`;
   return (
-    <section className="space-y-3">
-      <div className="overflow-hidden rounded-lg border border-(--border) bg-(--surface)">
-        <Image
-          src={data.headshot}
-          alt={fullName}
-          width={300}
-          height={300}
-          className="h-auto w-full"
-          priority
-        />
-      </div>
-      <div>
-        {data.sweaterNumber ? (
-          <p className="text-xs uppercase tracking-wide text-(--text-muted)">
-            #{data.sweaterNumber} · {data.position}
-          </p>
-        ) : (
-          <p className="text-xs uppercase tracking-wide text-(--text-muted)">{data.position}</p>
-        )}
-        <h1 className="text-2xl font-semibold tracking-tight">{fullName}</h1>
-      </div>
-      {data.currentTeamAbbrev ? (
-        <Link
-          href={`/team/${data.currentTeamAbbrev}`}
-          className="inline-flex items-center gap-2 text-sm hover:underline"
-        >
-          <TeamLogo code={data.currentTeamAbbrev} size={28} />
-          <span>{data.fullTeamName?.default ?? data.currentTeamAbbrev}</span>
-        </Link>
-      ) : null}
+    <section>
       <dl className="grid grid-cols-2 gap-y-1 text-sm">
         {data.shootsCatches ? <Pair label="Shoots/Catches" value={data.shootsCatches} /> : null}
         {data.heightInInches ? (
@@ -136,6 +207,17 @@ function Bio({ data }: { data: RichPlayer }) {
   );
 }
 
+function positionFullName(p: string): string {
+  switch (p) {
+    case "C": return "Center";
+    case "L": return "Left Wing";
+    case "R": return "Right Wing";
+    case "D": return "Defense";
+    case "G": return "Goalie";
+    default: return p;
+  }
+}
+
 function Pair({ label, value }: { label: string; value: string }) {
   return (
     <>
@@ -152,6 +234,7 @@ function Stats({ data }: { data: RichPlayer }) {
   );
   // Most recent first.
   seasons.sort((a, b) => b.season - a.season);
+  const { primary } = getTeamColors(data.currentTeamAbbrev ?? "");
 
   return (
     <section className="rounded-lg border border-(--border) bg-(--surface)">
@@ -171,7 +254,13 @@ function Stats({ data }: { data: RichPlayer }) {
           </thead>
           <tbody>
             {seasons.map((s, i) => (
-              <Row key={`${s.season}-${s.sequence ?? i}`} season={s} highlight={i === 0} isGoalie={isGoalie} />
+              <Row
+                key={`${s.season}-${s.sequence ?? i}`}
+                season={s}
+                highlight={i === 0}
+                highlightColor={primary}
+                isGoalie={isGoalie}
+              />
             ))}
             {data.careerTotals?.regularSeason ? (
               <Row
@@ -227,19 +316,28 @@ function GoalieHead() {
 function Row({
   season,
   highlight,
+  highlightColor,
   isGoalie,
   isCareer = false,
 }: {
   season: SeasonTotal;
   highlight: boolean;
+  highlightColor?: string;
   isGoalie: boolean;
   isCareer?: boolean;
 }) {
   const baseClass = "border-b border-(--border) last:border-0";
-  const highlightClass = highlight ? " bg-(--accent)/10 font-semibold" : "";
+  const highlightClass = highlight ? " font-semibold" : "";
   const careerClass = isCareer ? " border-t-2 border-(--border) text-(--text-muted)" : "";
+  // `highlightColor` is the team's primary hex (e.g. "#041E42"). Append a
+  // 1A alpha (~10%) for a soft team-tinted row instead of the generic blue
+  // `bg-(--accent)/10` we used before.
+  const highlightStyle =
+    highlight && highlightColor
+      ? { backgroundColor: `${highlightColor}1A` }
+      : undefined;
   return (
-    <tr className={baseClass + highlightClass + careerClass}>
+    <tr className={baseClass + highlightClass + careerClass} style={highlightStyle}>
       <td className="px-3 py-1 text-left tabular-nums">
         {isCareer ? "Career" : formatSeason(season.season)}
       </td>
