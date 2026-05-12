@@ -61,8 +61,10 @@ const GameWeekDay = z
 
 export const ScheduleResponse = z
   .object({
-    nextStartDate: z.string(),
-    previousStartDate: z.string(),
+    // /v1/schedule/{date} omits these near the end of the visible week
+    // (e.g. current week during playoffs). UI only consumes gameWeek.
+    nextStartDate: z.string().optional(),
+    previousStartDate: z.string().optional(),
     gameWeek: z.array(GameWeekDay),
   })
   .passthrough();

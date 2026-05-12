@@ -10,4 +10,15 @@ describe('ScheduleResponse schema', () => {
     }
     expect(result.success).toBe(true);
   });
+
+  it('parses responses missing nextStartDate / previousStartDate (current-week case)', () => {
+    const withoutNavDates: Record<string, unknown> = { ...fixture };
+    delete withoutNavDates.nextStartDate;
+    delete withoutNavDates.previousStartDate;
+    const result = ScheduleResponse.safeParse(withoutNavDates);
+    if (!result.success) {
+      console.error(JSON.stringify(result.error.issues, null, 2));
+    }
+    expect(result.success).toBe(true);
+  });
 });
