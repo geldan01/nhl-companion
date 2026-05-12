@@ -85,13 +85,13 @@ export function ScoreHeader({ game, updatedAt, isFetching }: ScoreHeaderProps) {
   return (
     <header
       role="banner"
-      className="sticky top-12 z-20 border-b border-(--border) bg-(--surface) px-4 py-3"
+      className="sticky top-12 z-20 border-b border-(--border) bg-(--surface) px-4 py-3 short:py-1"
       aria-label="Game header"
     >
       {/* Visually-hidden h1 so the page has a heading landmark. */}
       <h1 className="sr-only">{matchupTitle}</h1>
 
-      <div className="mx-auto flex w-full max-w-6xl items-start gap-4">
+      <div className="mx-auto flex w-full max-w-6xl items-start gap-4 short:gap-2">
         {/* Mobile: stacked team rows. Desktop (md+): full linescore table. */}
         <div className="min-w-0 flex-1">
           <StackedTeams game={game} className="md:hidden" />
@@ -128,7 +128,7 @@ export function ScoreHeader({ game, updatedAt, isFetching }: ScoreHeaderProps) {
 
 function StackedTeams({ game, className }: { game: GameResponse; className?: string }) {
   return (
-    <div className={`flex flex-col gap-2 ${className ?? ""}`}>
+    <div className={`flex flex-col gap-2 short:gap-0.5 ${className ?? ""}`}>
       <StackedTeamRow team={game.awayTeam} />
       <StackedTeamRow team={game.homeTeam} />
     </div>
@@ -138,14 +138,16 @@ function StackedTeams({ game, className }: { game: GameResponse; className?: str
 function StackedTeamRow({ team }: { team: GameResponse["awayTeam"] }) {
   const fullName = `${team.placeName.default} ${team.commonName.default}`;
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-3 short:gap-2">
       <Link href={`/team/${team.abbrev}`} aria-label={fullName} className="inline-flex shrink-0">
-        <TeamLogo code={team.abbrev} size={48} bare />
+        <span className="block h-12 w-12 short:h-7 short:w-7">
+          <TeamLogo code={team.abbrev} size="100%" bare />
+        </span>
       </Link>
-      <Link href={`/team/${team.abbrev}`} className="min-w-0 flex-1 truncate text-lg font-semibold tracking-tight hover:underline">
+      <Link href={`/team/${team.abbrev}`} className="min-w-0 flex-1 truncate text-lg short:text-sm font-semibold tracking-tight hover:underline">
         {fullName}
       </Link>
-      <span className="text-3xl font-bold tabular-nums">
+      <span className="text-3xl short:text-lg font-bold tabular-nums">
         {typeof team.score === "number" ? team.score : "—"}
       </span>
     </div>
@@ -202,15 +204,17 @@ function LinescoreRow({
   const fullName = `${team.placeName.default} ${team.commonName.default}`;
   return (
     <tr className="align-middle">
-      <td className="py-2">
+      <td className="py-2 short:py-0.5">
         <Link href={`/team/${team.abbrev}`} aria-label={fullName} className="inline-flex">
-          <TeamLogo code={team.abbrev} size={64} bare />
+          <span className="block h-16 w-16 short:h-8 short:w-8">
+            <TeamLogo code={team.abbrev} size="100%" bare />
+          </span>
         </Link>
       </td>
-      <td className="py-2 pr-4">
+      <td className="py-2 pr-4 short:py-0.5">
         <Link
           href={`/team/${team.abbrev}`}
-          className="text-2xl font-semibold tracking-tight hover:underline"
+          className="text-2xl short:text-sm font-semibold tracking-tight hover:underline"
         >
           {fullName}
         </Link>
@@ -218,14 +222,14 @@ function LinescoreRow({
       {periods.map((p) => (
         <td
           key={p.number}
-          className="px-1 py-2 text-center text-2xl tabular-nums text-(--text-muted)"
+          className="px-1 py-2 short:py-0.5 text-center text-2xl short:text-base tabular-nums text-(--text-muted)"
         >
           {isPeriodPlayed(game, p.number) ? goalsFor(game, team.abbrev, p.number) : "—"}
         </td>
       ))}
       <td
         data-testid={`team-total-${team.abbrev}`}
-        className="px-1 py-2 text-center text-4xl font-bold tabular-nums"
+        className="px-1 py-2 short:py-0.5 text-center text-4xl short:text-lg font-bold tabular-nums"
       >
         {typeof team.score === "number" ? team.score : "—"}
       </td>
