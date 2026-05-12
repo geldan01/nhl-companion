@@ -1,5 +1,10 @@
 @import "tailwindcss";
 
+/* `short:` targets short viewports — i.e. phones in landscape, whose height
+   typically tops out around ~430px. Used to compact sticky headers that
+   would otherwise eat half the screen. */
+@custom-variant short (@media (max-height: 500px));
+
 /* Design tokens.
    Reference via Tailwind v4 CSS-variable shorthand, e.g. `bg-(--surface)`.
    Light values live under :root; dark values flip via prefers-color-scheme. */
