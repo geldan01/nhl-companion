@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { DataState } from "@/components/data-state";
 import { BoxPane } from "@/components/game/box-pane";
+import { BreakdownsPane } from "@/components/game/breakdowns-pane";
 import { GameBody } from "@/components/game/game-body";
 import { PlayerPane } from "@/components/game/player-pane";
 import { PlaysPane } from "@/components/game/plays-pane";
@@ -80,7 +81,8 @@ export function GameDetail({ id }: { id: number }) {
                   onSelectEvent={setSelectedEventId}
                 />
               }
-              box={
+              box={<BoxPane id={id} />}
+              breakdowns={
                 selectedEventId !== null ? (
                   <PlayerPane
                     id={id}
@@ -88,7 +90,7 @@ export function GameDetail({ id }: { id: number }) {
                     onClose={() => setSelectedEventId(null)}
                   />
                 ) : (
-                  <BoxPane id={id} />
+                  <BreakdownsPane id={id} />
                 )
               }
               rink={

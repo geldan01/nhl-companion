@@ -3,24 +3,27 @@
 import { useSyncExternalStore } from "react";
 import { useMatchMedia } from "@/lib/use-match-media";
 
-const TABS = ["plays", "box", "shots"] as const;
+const TABS = ["plays", "box", "shots", "breakdowns"] as const;
 type Tab = (typeof TABS)[number];
 
 const TAB_LABELS: Record<Tab, string> = {
   plays: "Plays",
   box: "Box",
   shots: "Shots",
+  breakdowns: "Breakdowns",
 };
 
 export type GameBodyProps = {
   plays: React.ReactNode;
   box: React.ReactNode;
   rink: React.ReactNode;
+  breakdowns: React.ReactNode;
 };
 
 // Body layout for /game/[id]: tabs on mobile, 3-pane grid on desktop.
-// The lg breakpoint matches the AppShell's pivot.
-export function GameBody({ plays, box, rink }: GameBodyProps) {
+// The lg breakpoint matches the AppShell's pivot. On desktop the right column
+// shows Breakdowns (Box becomes mobile-only via the "Box" tab).
+export function GameBody({ plays, box, rink, breakdowns }: GameBodyProps) {
   const isDesktop = useMatchMedia("(min-width: 1024px)");
 
   if (isDesktop) {
@@ -29,13 +32,13 @@ export function GameBody({ plays, box, rink }: GameBodyProps) {
         <div className="grid h-[calc(100vh-12rem)] grid-cols-[1.2fr_1fr_1fr] gap-4">
           <Pane>{rink}</Pane>
           <Pane>{plays}</Pane>
-          <Pane>{box}</Pane>
+          <Pane>{breakdowns}</Pane>
         </div>
       </div>
     );
   }
 
-  return <Tabs plays={plays} box={box} rink={rink} />;
+  return <Tabs plays={plays} box={box} rink={rink} breakdowns={breakdowns} />;
 }
 
 function Pane({ children }: { children: React.ReactNode }) {
@@ -46,10 +49,17 @@ function Pane({ children }: { children: React.ReactNode }) {
   );
 }
 
-function Tabs({ plays, box, rink }: GameBodyProps) {
+function Tabs({ plays, box, rink, breakdowns }: GameBodyProps) {
   const [tab, setTab] = useHashTab();
 
-  const content = tab === "plays" ? plays : tab === "box" ? box : rink;
+  const content =
+    tab === "plays"
+      ? plays
+      : tab === "box"
+        ? box
+        : tab === "breakdowns"
+          ? breakdowns
+          : rink;
 
   return (
     <div className="mx-auto w-full max-w-6xl">

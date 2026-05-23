@@ -94,9 +94,11 @@ describe("Game detail", () => {
     setMatchMedia(true); // override: desktop
     renderWithProviders(<GameDetail id={FIXTURE_GAME_ID} />);
     await waitFor(() => {
-      // Box pane (Team stats label) AND rink pane (the rink backdrop SVG)
+      // Breakdowns pane (period heading) AND rink pane (the rink backdrop SVG)
       // are both present at the same time.
-      expect(screen.getByText(/team stats/i)).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { level: 3, name: /1st period/i }),
+      ).toBeInTheDocument();
       expect(screen.getByRole("img", { name: /rink backdrop/i })).toBeInTheDocument();
     });
   });
@@ -139,11 +141,13 @@ describe("Game detail", () => {
     });
   });
 
-  it("on desktop, clicking a penalty row swaps boxscore for player pane with both players", async () => {
+  it("on desktop, clicking a penalty row swaps breakdowns for player pane with both players", async () => {
     setMatchMedia(true);
     renderWithProviders(<GameDetail id={FIXTURE_GAME_ID} />);
     await waitFor(() => {
-      expect(screen.getByText(/team stats/i)).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { level: 3, name: /1st period/i }),
+      ).toBeInTheDocument();
     });
 
     // Click the first penalty row.
@@ -152,8 +156,10 @@ describe("Game detail", () => {
     fireEvent.click(penaltyRow!);
 
     await waitFor(() => {
-      // Boxscore is gone …
-      expect(screen.queryByText(/team stats/i)).not.toBeInTheDocument();
+      // Breakdowns is gone …
+      expect(
+        screen.queryByRole("heading", { level: 3, name: /1st period/i }),
+      ).not.toBeInTheDocument();
       // … replaced by the player pane with both role labels.
       expect(screen.getByText(/penalty on/i)).toBeInTheDocument();
       expect(screen.getByText(/drawn by/i)).toBeInTheDocument();
@@ -164,21 +170,27 @@ describe("Game detail", () => {
     });
   });
 
-  it("on desktop, clicking the same row again clears the selection and restores the boxscore", async () => {
+  it("on desktop, clicking the same row again clears the selection and restores the breakdowns", async () => {
     setMatchMedia(true);
     renderWithProviders(<GameDetail id={FIXTURE_GAME_ID} />);
     await waitFor(() => {
-      expect(screen.getByText(/team stats/i)).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { level: 3, name: /1st period/i }),
+      ).toBeInTheDocument();
     });
 
     const row = screen.getByText(/Hit by Garnet Hathaway on Mark Jankowski/).closest("li");
     fireEvent.click(row!);
     await waitFor(() => {
-      expect(screen.queryByText(/team stats/i)).not.toBeInTheDocument();
+      expect(
+        screen.queryByRole("heading", { level: 3, name: /1st period/i }),
+      ).not.toBeInTheDocument();
     });
     fireEvent.click(row!);
     await waitFor(() => {
-      expect(screen.getByText(/team stats/i)).toBeInTheDocument();
+      expect(
+        screen.getByRole("heading", { level: 3, name: /1st period/i }),
+      ).toBeInTheDocument();
     });
   });
 
