@@ -34,6 +34,7 @@ export const TTL = {
   teamSchedule: 60 * 60,
   player: 24 * 60 * 60,
   stats: 5 * 60,
+  news: 10 * 60,
 };
 
 export const STALE = {
@@ -50,6 +51,7 @@ export const STALE = {
   teamSchedule: 30 * MINUTE,
   player: HOUR,
   stats: MINUTE,
+  news: 5 * MINUTE,
 };
 
 export const POLL = {
@@ -65,4 +67,5 @@ export const POLL = {
   teamSchedule: false as const,
   player: false as const,
   stats: false as const,
+  news: false as const,
 };

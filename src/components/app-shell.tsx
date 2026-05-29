@@ -6,7 +6,8 @@ import type { ReactNode } from "react";
 import { NowWatchingPill } from "./now-watching-pill";
 
 const NAV_ITEMS = [
-  { href: "/", label: "Scoreboard" },
+  { href: "/", label: "Home" },
+  { href: "/scoreboard", label: "Scoreboard" },
   { href: "/standings", label: "Standings" },
   { href: "/playoffs", label: "Playoffs" },
   { href: "/stats", label: "Stats" },

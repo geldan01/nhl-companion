@@ -8,7 +8,7 @@ let mockSearch = new URLSearchParams();
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ replace: vi.fn(), push: vi.fn() }),
   useSearchParams: () => mockSearch,
-  usePathname: () => "/",
+  usePathname: () => "/scoreboard",
 }));
 
 // Pin "today" to a date that exists in the schedule fixture. Mocking
@@ -19,7 +19,7 @@ vi.mock("@/lib/url", async () => {
   return { ...actual, todayUtcDate: () => "2026-05-09" };
 });
 
-import HomePage from "@/app/page";
+import ScoreboardPage from "@/app/scoreboard/page";
 
 describe("Scoreboard", () => {
   let teardown: () => void;
@@ -38,7 +38,7 @@ describe("Scoreboard", () => {
   });
 
   it("renders the loading skeleton then game cards from the fixture", async () => {
-    renderWithProviders(<HomePage />);
+    renderWithProviders(<ScoreboardPage />);
 
     // Skeleton appears immediately (before fetch resolves).
     expect(document.querySelectorAll(".animate-pulse").length).toBeGreaterThan(0);
@@ -50,7 +50,7 @@ describe("Scoreboard", () => {
   });
 
   it("links each game card to /game/[id]", async () => {
-    renderWithProviders(<HomePage />);
+    renderWithProviders(<ScoreboardPage />);
     await waitFor(() => {
       const gameLinks = screen
         .getAllByRole("link")
@@ -60,7 +60,7 @@ describe("Scoreboard", () => {
   });
 
   it("clicking the next-day chevron updates the URL to ?date= one day later", async () => {
-    renderWithProviders(<HomePage />);
+    renderWithProviders(<ScoreboardPage />);
     await waitFor(() => {
       expect(screen.getByRole("button", { name: /next day/i })).toBeInTheDocument();
     });
@@ -70,7 +70,7 @@ describe("Scoreboard", () => {
 
   it("with ?date=YYYY-MM-DD shows that date's games and a Today link", async () => {
     mockSearch = new URLSearchParams("date=2026-05-11");
-    renderWithProviders(<HomePage />);
+    renderWithProviders(<ScoreboardPage />);
     await waitFor(() => {
       expect(screen.getByRole("button", { name: /today/i })).toBeInTheDocument();
     });
@@ -78,7 +78,7 @@ describe("Scoreboard", () => {
 
   it("clicking the Today link drops the date param", async () => {
     mockSearch = new URLSearchParams("date=2026-05-12");
-    renderWithProviders(<HomePage />);
+    renderWithProviders(<ScoreboardPage />);
     await waitFor(() => {
       expect(screen.getByRole("button", { name: /today/i })).toBeInTheDocument();
     });
