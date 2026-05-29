@@ -8,7 +8,9 @@
 import boxscore from "./boxscore/__fixtures__/boxscore.json";
 import game from "./game/__fixtures__/game.json";
 import playByPlay from "./playByPlay/__fixtures__/playByPlay.json";
+import playoffBracket from "./playoffBracket/__fixtures__/playoffBracket.json";
 import player from "./player/__fixtures__/player.json";
+import rightRail from "./rightRail/__fixtures__/rightRail.json";
 import roster from "./roster/__fixtures__/roster.json";
 import schedule from "./schedule/__fixtures__/schedule.json";
 import scheduleNow from "./scheduleNow/__fixtures__/scheduleNow.json";
@@ -39,8 +41,16 @@ const ENTRIES: Entry[] = [
     data: boxscore,
   },
   {
+    match: (u) => /^\/v1\/gamecenter\/\d+\/right-rail$/.test(u.pathname),
+    data: rightRail,
+  },
+  {
     match: (u) => /^\/v1\/gamecenter\/\d+\/landing$/.test(u.pathname),
     data: game,
+  },
+  {
+    match: (u) => /^\/v1\/playoff-bracket\/\d{4}$/.test(u.pathname),
+    data: playoffBracket,
   },
   {
     match: (u) => /^\/v1\/club-stats\/[A-Z]+\/now$/.test(u.pathname),

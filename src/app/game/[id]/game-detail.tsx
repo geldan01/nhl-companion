@@ -9,6 +9,7 @@ import { PlayerPane } from "@/components/game/player-pane";
 import { PlaysPane } from "@/components/game/plays-pane";
 import { PreGamePane } from "@/components/game/pre-game-pane";
 import { ScoreHeader } from "@/components/game/score-header";
+import { SeriesBanner } from "@/components/game/series-banner";
 import { RinkPane } from "@/components/rink/RinkPane";
 import { Skeleton } from "@/components/skeleton";
 import { useGame } from "@/lib/nhl/game";
@@ -70,6 +71,7 @@ export function GameDetail({ id }: { id: number }) {
             updatedAt={game.dataUpdatedAt}
             isFetching={game.isFetching}
           />
+          <SeriesBanner game={game.data} />
           {game.data.gameState === "FUT" || game.data.gameState === "PRE" ? (
             <PreGamePane game={game.data} />
           ) : (

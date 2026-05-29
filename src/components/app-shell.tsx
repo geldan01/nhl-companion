@@ -8,6 +8,7 @@ import { NowWatchingPill } from "./now-watching-pill";
 const NAV_ITEMS = [
   { href: "/", label: "Scoreboard" },
   { href: "/standings", label: "Standings" },
+  { href: "/playoffs", label: "Playoffs" },
   { href: "/stats", label: "Stats" },
 ] as const;
 

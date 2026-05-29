@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { ScheduleGame } from "@/lib/nhl/schedule";
+import { seriesSummary } from "@/lib/series-status";
 import { useWatching } from "@/lib/watching";
 import { GameStatePill } from "./game-state-pill";
 import { TeamLogo } from "./team-logo";
@@ -44,7 +45,30 @@ export function GameCard({ game, className }: GameCardProps) {
           startTimeUTC={game.startTimeUTC}
         />
       </div>
+      <SeriesBadge game={game} />
     </Link>
+  );
+}
+
+function SeriesBadge({ game }: { game: ScheduleGame }) {
+  const s = game.seriesStatus;
+  // Only playoff games carry a series; bail otherwise. `topSeedWins` is the
+  // signal the block is populated (pre-series schedule rows can omit it).
+  if (!s || s.topSeedWins == null || s.bottomSeedWins == null) return null;
+  if (!s.topSeedTeamAbbrev || !s.bottomSeedTeamAbbrev) return null;
+
+  const summary = seriesSummary(
+    { abbrev: s.topSeedTeamAbbrev, wins: s.topSeedWins },
+    { abbrev: s.bottomSeedTeamAbbrev, wins: s.bottomSeedWins },
+    s.neededToWin ?? 4,
+  );
+  const prefix = s.seriesAbbrev ? `${s.seriesAbbrev} · ` : "";
+
+  return (
+    <p className="text-center text-xs text-(--text-muted)">
+      {prefix}
+      {summary.text}
+    </p>
   );
 }
 
