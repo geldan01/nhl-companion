@@ -11,6 +11,8 @@ const nextConfig: NextConfig = {
       // ?season=YYYYYYYY for season-specific variants.
       { protocol: "https", hostname: "assets.nhle.com", pathname: "/logos/**" },
       { protocol: "https", hostname: "assets.nhle.com", pathname: "/mugs/**" },
+      // Forge CMS thumbnails for NHL news headlines (Cloudinary-fronted).
+      { protocol: "https", hostname: "media.d3.nhle.com", pathname: "/image/**" },
     ],
     // NHL team logos are served as SVG. Next blocks SVG optimization by
     // default because SVGs can carry inline scripts; the CSP below sandboxes
