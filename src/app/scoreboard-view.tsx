@@ -1,6 +1,6 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { DataState } from "@/components/data-state";
 import { GameCard } from "@/components/game-card";
 import { Skeleton } from "@/components/skeleton";
@@ -15,7 +15,6 @@ const STATE_GROUPS = [
 ] as const;
 
 export function ScoreboardView() {
-  const router = useRouter();
   const params = useSearchParams();
   const today = todayUtcDate();
   const requested = parseScoreboardDate(params.get("date"));
@@ -32,11 +31,18 @@ export function ScoreboardView() {
   const games = day?.games ?? [];
 
   const setDate = (next: string | null) => {
-    const sp = new URLSearchParams(params);
+    // Update the URL with the native History API rather than router.replace().
+    // The schedule data is fetched client-side via React Query, so a server RSC
+    // round-trip on every date change is pure overhead — and under rapid clicks
+    // or a slow mobile connection those round-trips pile up and stall, leaving
+    // the controlled date input snapped back to a stale value (issue #7).
+    // window.history.replaceState updates instantly and still syncs with
+    // useSearchParams. See next/dist/docs .../linking-and-navigating.md.
+    const sp = new URLSearchParams(params.toString());
     if (next === null || next === today) sp.delete("date");
     else sp.set("date", next);
     const qs = sp.toString();
-    router.replace(qs ? `/?${qs}` : "/");
+    window.history.replaceState(null, "", qs ? `/?${qs}` : "/");
   };
 
   return (
