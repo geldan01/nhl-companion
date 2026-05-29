@@ -3,11 +3,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { renderWithProviders } from "./render";
 import { installFetchMock } from "./setup-fetch";
 
-const mockReplace = vi.fn();
 let mockSearch = new URLSearchParams();
 
 vi.mock("next/navigation", () => ({
-  useRouter: () => ({ replace: mockReplace, push: vi.fn() }),
+  useRouter: () => ({ replace: vi.fn(), push: vi.fn() }),
   useSearchParams: () => mockSearch,
   usePathname: () => "/",
 }));
@@ -25,10 +24,12 @@ import HomePage from "@/app/page";
 describe("Scoreboard", () => {
   let teardown: () => void;
 
+  let replaceState: ReturnType<typeof vi.spyOn>;
+
   beforeEach(() => {
     teardown = installFetchMock();
-    mockReplace.mockReset();
     mockSearch = new URLSearchParams();
+    replaceState = vi.spyOn(window.history, "replaceState");
   });
 
   afterEach(() => {
@@ -58,13 +59,13 @@ describe("Scoreboard", () => {
     });
   });
 
-  it("clicking the next-day chevron calls router.replace with ?date= one day later", async () => {
+  it("clicking the next-day chevron updates the URL to ?date= one day later", async () => {
     renderWithProviders(<HomePage />);
     await waitFor(() => {
       expect(screen.getByRole("button", { name: /next day/i })).toBeInTheDocument();
     });
     screen.getByRole("button", { name: /next day/i }).click();
-    expect(mockReplace).toHaveBeenCalledWith("/?date=2026-05-10");
+    expect(replaceState).toHaveBeenCalledWith(null, "", "/?date=2026-05-10");
   });
 
   it("with ?date=YYYY-MM-DD shows that date's games and a Today link", async () => {
@@ -82,6 +83,6 @@ describe("Scoreboard", () => {
       expect(screen.getByRole("button", { name: /today/i })).toBeInTheDocument();
     });
     screen.getByRole("button", { name: /today/i }).click();
-    expect(mockReplace).toHaveBeenCalledWith("/");
+    expect(replaceState).toHaveBeenCalledWith(null, "", "/");
   });
 });
