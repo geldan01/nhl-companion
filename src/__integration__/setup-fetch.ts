@@ -2,7 +2,9 @@ import { vi } from "vitest";
 import boxscore from "@/lib/nhl/boxscore/__fixtures__/boxscore.json";
 import game from "@/lib/nhl/game/__fixtures__/game.json";
 import playByPlay from "@/lib/nhl/playByPlay/__fixtures__/playByPlay.json";
+import playoffBracket from "@/lib/nhl/playoffBracket/__fixtures__/playoffBracket.json";
 import player from "@/lib/nhl/player/__fixtures__/player.json";
+import rightRail from "@/lib/nhl/rightRail/__fixtures__/rightRail.json";
 import roster from "@/lib/nhl/roster/__fixtures__/roster.json";
 import schedule from "@/lib/nhl/schedule/__fixtures__/schedule.json";
 import scheduleNow from "@/lib/nhl/scheduleNow/__fixtures__/scheduleNow.json";
@@ -51,7 +53,15 @@ const ROUTES: Route[] = [
     match: (u) => u.pathname === "/api/nhl/game/2025030221/boxscore",
     data: boxscore,
   },
+  {
+    match: (u) => u.pathname === "/api/nhl/game/2025030221/right-rail",
+    data: rightRail,
+  },
   { match: (u) => u.pathname === "/api/nhl/game/2025030221", data: game },
+  {
+    match: (u) => /^\/api\/nhl\/playoff-bracket\/\d{4}$/.test(u.pathname),
+    data: playoffBracket,
+  },
   {
     match: (u) => /^\/api\/nhl\/team\/[A-Z]+\/roster$/.test(u.pathname),
     data: roster,
