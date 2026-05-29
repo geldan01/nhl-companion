@@ -1,10 +1,12 @@
 "use client";
 
 import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
 import { DataState } from "@/components/data-state";
 import { GameStatePill } from "@/components/game-state-pill";
 import { Skeleton } from "@/components/skeleton";
 import { TeamLogo } from "@/components/team-logo";
+import { KpiDashboard } from "@/components/team/kpi-dashboard";
 import type { RosterPlayer, RosterResponse } from "@/lib/nhl/roster";
 import { useRoster } from "@/lib/nhl/roster";
 import type { StandingEntry } from "@/lib/nhl/standings";
@@ -13,12 +15,35 @@ import type { TeamScheduleGame } from "@/lib/nhl/teamSchedule";
 import { useTeamSchedule } from "@/lib/nhl/teamSchedule";
 import { getTeamColors, teamFullName, type TeamCode } from "@/lib/team-colors";
 
+const TABS = [
+  { key: "roster", label: "Roster" },
+  { key: "dashboard", label: "Dashboard" },
+] as const;
+
+type TabKey = (typeof TABS)[number]["key"];
+
+function parseTab(value: string | null): TabKey {
+  return value === "dashboard" ? "dashboard" : "roster";
+}
+
 export function TeamPage({ code }: { code: string }) {
   const { primary } = getTeamColors(code as TeamCode);
-  const roster = useRoster(code);
+
+  const router = useRouter();
+  const params = useSearchParams();
+  const tab = parseTab(params.get("tab"));
+
+  const setTab = (next: TabKey) => {
+    const sp = new URLSearchParams(params);
+    if (next === "roster") sp.delete("tab");
+    else sp.set("tab", next);
+    const qs = sp.toString();
+    router.replace(qs ? `/team/${code}?${qs}` : `/team/${code}`);
+  };
 
   // Subscribe to standings so cold visits show division/record too. Same
-  // React Query key as /standings → no extra network on warm cache.
+  // React Query key as /standings → no extra network on warm cache. Shared by
+  // the header and the dashboard's KPI cards.
   const standings = useStandings();
   const entry = standings.data?.standings.find(
     (s) => s.teamAbbrev.default === code,
@@ -37,20 +62,61 @@ export function TeamPage({ code }: { code: string }) {
     <div className="relative min-h-full" style={{ background }}>
       <div className="mx-auto w-full max-w-5xl">
         <Header code={code} entry={entry} />
-        <DataState
-          isLoading={roster.isLoading}
-          error={roster.error ?? null}
-          hasData={Boolean(roster.data)}
-          skeleton={
-            <div className="px-4 py-4">
-              <Skeleton variant="row" count={6} />
-            </div>
-          }
-        >
-          {roster.data ? <Sections code={code} roster={roster.data} /> : null}
-        </DataState>
+        <div className="px-4">
+          <Tabs tab={tab} onChange={setTab} />
+        </div>
+        {tab === "dashboard" ? (
+          <KpiDashboard code={code} entry={entry} />
+        ) : (
+          <RosterTab code={code} />
+        )}
       </div>
     </div>
+  );
+}
+
+function Tabs({ tab, onChange }: { tab: TabKey; onChange: (next: TabKey) => void }) {
+  return (
+    <div
+      role="tablist"
+      aria-label="Team views"
+      className="inline-flex rounded-full border border-(--border) bg-(--surface) p-0.5 text-sm"
+    >
+      {TABS.map((t) => (
+        <button
+          key={t.key}
+          type="button"
+          role="tab"
+          aria-selected={tab === t.key}
+          onClick={() => onChange(t.key)}
+          className={`rounded-full px-4 py-1 transition-colors ${
+            tab === t.key
+              ? "bg-(--bg) text-(--text) shadow-sm"
+              : "text-(--text-muted) hover:text-(--text)"
+          }`}
+        >
+          {t.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+function RosterTab({ code }: { code: string }) {
+  const roster = useRoster(code);
+  return (
+    <DataState
+      isLoading={roster.isLoading}
+      error={roster.error ?? null}
+      hasData={Boolean(roster.data)}
+      skeleton={
+        <div className="px-4 py-4">
+          <Skeleton variant="row" count={6} />
+        </div>
+      }
+    >
+      {roster.data ? <Sections code={code} roster={roster.data} /> : null}
+    </DataState>
   );
 }
 
